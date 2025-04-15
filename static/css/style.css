@@ -1,4 +1,48 @@
-/* Estilos existentes... */
+/* Estilo global para el fondo y el texto */
+body {
+    background-color: #2c003e; /* Morado oscuro */
+    color: #ffffff; /* Texto blanco */
+    font-family: Arial, sans-serif; /* Fuente legible */
+    margin: 0;
+    padding: 0;
+}
+
+/* Asegurar que los enlaces sean legibles */
+a {
+    color: #ffcc00; /* Amarillo para enlaces */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Ajustar los contenedores para que sean más legibles */
+.container {
+    padding: 20px;
+    background-color: rgba(44, 0, 62, 0.9); /* Fondo semitransparente */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Títulos animados */
+.animated-title {
+    color: #ffcc00; /* Amarillo para destacar los títulos */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilo para el fondo de todas las páginas */
+body {
+    background: url('../img/image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff; /* Cambia el color del texto si es necesario para que sea legible */
+    position: relative;
+    z-index: 1;
+}
+
+#background-container {
+    z-index: -1;
+}
 
 /* Nuevos estilos para autenticación */
 .auth-container {
@@ -97,4 +141,10 @@
     color: white;
     border: none;
     border-radius: 0 4px 4px 0;
+}
+
+/* Estilo para mejorar la legibilidad del texto */
+.text-readable {
+    color: #ffffff; /* Blanco para un fondo azul */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para mejorar la legibilidad */
 }

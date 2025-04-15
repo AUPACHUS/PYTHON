@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Galería de Fotos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="animated-title text-center mb-4">Galería de Fotos</h1>
+
+    <!-- Galería de imágenes -->
+    <div class="gallery-container">
+        {% for image in images %}
+        <div class="gallery-item">
+            <img src="{{ url_for('static', filename='img/' + image) }}" alt="{{ image }}" class="img-fluid rounded">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('social') }}">Redes Sociales</a>
+</li>
+
+<link rel="stylesheet" href="../static/css/style.css">

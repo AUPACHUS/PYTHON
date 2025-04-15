@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Redes Sociales{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="animated-title text-center mb-4">Conéctate en Redes Sociales</h1>
+    <p class="text-center mb-4">Aquí tienes enlaces a las redes sociales más populares:</p>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-3">
+            <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-100">Facebook</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" class="btn btn-info w-100">X (Twitter)</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="btn btn-dark w-100">TikTok</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="btn btn-danger w-100">Instagram</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-100">LinkedIn</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="btn btn-danger w-100">YouTube</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.pinterest.com" target="_blank" rel="noopener noreferrer" class="btn btn-danger w-100">Pinterest</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.snapchat.com" target="_blank" rel="noopener noreferrer" class="btn btn-warning w-100">Snapchat</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="https://www.reddit.com" target="_blank" rel="noopener noreferrer" class="btn btn-secondary w-100">Reddit</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<li class="nav-item">
+    <a class="nav-link" href="{{ url_for('social') }}">Redes Sociales</a>
+</li>
