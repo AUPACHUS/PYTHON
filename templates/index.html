@@ -130,12 +130,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         <!-- Botones para controlar la música -->
         <div class="text-center mb-5">
-            <button id="playButton" class="btn btn-success">Reproducir Música</button>
-            <button id="stopButton" class="btn btn-danger">Detener</button>
+            <button id="prevButton" class="btn btn-secondary">Pista Anterior</button>
+            <button id="playButton" class="btn btn-success">Reproducir</button>
+            <button id="nextButton" class="btn btn-secondary">Siguiente Pista</button>
             <div class="mt-3">
-                <label for="volumeControl" class="form-label">Volumen:</label>
-                <input type="range" class="form-range w-50 mx-auto" id="volumeControl" min="0" max="1" step="0.1" value="0.7"><div class="text-center mb-5">
-            
+                <label for="trackList" class="form-label">Seleccionar pista:</label>
+                <select id="trackList" class="form-select w-50 mx-auto">
+                    <option value="0">Pista 1 - title01.mp3</option>
+                    <option value="1">Pista 2 - title02.mp3</option>
+                    <option value="2">Pista 3 - title03.mp3</option>
+                </select>
         </div>
 
         <div class="text-center mb-5">
