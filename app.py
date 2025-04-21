@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import os
 import json
 from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+import time
 
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Necesario para mostrar mensajes flash
@@ -13,17 +16,48 @@ os.makedirs(app.config['PDF_FOLDER'], exist_ok=True)
 # Archivos para almacenar datos
 USERS_FILE = "users.json"
 OPINIONS_FILE = "opinions.json"
+NEWS_FILE = "news.json"
 
 # Cargar datos
 def load_data(file):
-    if os.path.exists(file):
+    try:
         with open(file, "r") as f:
             return json.load(f)
-    return []
+    except FileNotFoundError:
+        return []
 
 def save_data(file, data):
     with open(file, "w") as f:
         json.dump(data, f, indent=4)
+
+# Función para obtener noticias de Reuters
+def fetch_reuters_news():
+    url = "https://www.reuters.com/world/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Extraer titulares de noticias
+    headlines = []
+    for item in soup.select(".story-title, .MediaStoryCard__title__2PHMe"):
+        if len(headlines) >= 6:  # Limitar a 6 noticias
+            break
+        headlines.append(item.get_text(strip=True))
+
+    # Guardar las noticias en un archivo JSON
+    save_data(NEWS_FILE, {"last_updated": time.time(), "headlines": headlines})
+    return headlines
+
+# Función para cargar noticias (y actualizarlas si es necesario)
+def get_news():
+    news_data = load_data(NEWS_FILE)
+    last_updated = news_data.get("last_updated", 0)
+    headlines = news_data.get("headlines", [])
+
+    # Verificar si han pasado más de 5 días (5 * 24 * 60 * 60 segundos)
+    if time.time() - last_updated > 5 * 24 * 60 * 60 or not headlines:
+        headlines = fetch_reuters_news()
+
+    return headlines
 
 # Ruta principal
 @app.route("/")
@@ -93,6 +127,13 @@ def register_user():
     flash("Usuario registrado exitosamente.")
     return redirect(url_for("inteligencia_artificial"))
 
+# Ruta para la página de opiniones
+@app.route("/opinion")
+def opinion():
+    headlines = get_news()  # Obtener noticias actualizadas
+    opinions = load_data(OPINIONS_FILE)  # Cargar opiniones desde el archivo
+    return render_template("opinion.html", headlines=headlines, opinions=opinions)
+
 # Ruta para enviar opiniones
 @app.route("/submit_opinion", methods=["POST"])
 def submit_opinion():
@@ -105,7 +146,7 @@ def submit_opinion():
     opinions.append({"username": username, "text": text, "date": date})
     save_data(OPINIONS_FILE, opinions)
     flash("Opinión enviada exitosamente.")
-    return redirect(url_for("inteligencia_artificial"))
+    return redirect(url_for("opinion"))
 
 @app.route("/social")
 def social():

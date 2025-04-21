@@ -10,21 +10,12 @@
         <ul class="list-group">
         {% for pdf in pdfs %}
             <li class="list-group-item">
-                <a href="{{ url_for('download_pdf', filename=pdf) }}" target="_blank">{{ pdf }}</a>
+                <a href="{{ url_for('static', filename='pdfs/' + pdf) }}" target="_blank" class="pdf-link">{{ pdf }}</a>
             </li>
         {% endfor %}
         </ul>
     {% else %}
         <p class="text-center">No hay PDFs disponibles.</p>
     {% endif %}
-
-    <!-- Formulario para subir PDFs -->
-    <div class="mt-4">
-        <h3 class="text-center">Subir un nuevo PDF</h3>
-        <form class="upload-form text-center" action="{{ url_for('upload_pdf') }}" method="POST" enctype="multipart/form-data">
-            <input type="file" name="pdf" accept=".pdf" class="form-control mb-3" required>
-            <button type="submit" class="btn btn-success">Subir PDF</button>
-        </form>
-    </div>
 </div>
 {% endblock %}

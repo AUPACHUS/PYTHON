@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}¿Y tú qué opinas?{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="animated-title text-center mb-4">¿Y tú qué opinas?</h1>
+    <p class="text-center">Comparte tu opinión sobre las noticias más relevantes del día.</p>
+
+    <!-- Noticias relevantes -->
+    <div class="mb-4">
+        <h2 class="text-center">Noticias del día</h2>
+        <ul class="list-group">
+            {% for headline in headlines %}
+                <li class="list-group-item">{{ headline }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Formulario para enviar opiniones -->
+    <div class="mb-4">
+        <h2 class="text-center">Escribe tu opinión</h2>
+        <form action="{{ url_for('submit_opinion') }}" method="POST">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nombre (opcional):</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="Anónimo">
+            </div>
+            <div class="mb-3">
+                <label for="opinion" class="form-label">Tu opinión:</label>
+                <textarea class="form-control" id="opinion" name="opinion" rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar opinión</button>
+        </form>
+    </div>
+
+    <!-- Tablón de opiniones -->
+    <div>
+        <h2 class="text-center">Opiniones recientes</h2>
+        {% if opinions %}
+            <ul class="list-group">
+            {% for opinion in opinions %}
+                <li class="list-group-item">
+                    <strong>{{ opinion.username }}</strong> ({{ opinion.date }}):<br>
+                    {{ opinion.text }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-center">Aún no hay opiniones. ¡Sé el primero en opinar!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

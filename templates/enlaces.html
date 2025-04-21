@@ -5,16 +5,30 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="animated-title text-center mb-4">Enlaces Útiles</h1>
-    <ul class="list-group">
-        <li class="list-group-item">
-            <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Google</a>
-        </li>
-        <li class="list-group-item">
-            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a>
-        </li>
-        <li class="list-group-item">
-            <a href="https://www.wikipedia.org" target="_blank" rel="noopener noreferrer">Wikipedia</a>
-        </li>
-    </ul>
+    <div class="enlaces-list">
+        <div class="enlace-item">
+            <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="enlace-link">Google</a>
+            <span class="enlace-description">El motor de búsqueda más popular.</span>
+        </div><div class="enlace-item">
+            <a href="https://www.efset.org/es/" target="_blank" rel="noopener noreferrer" class="enlace-link">Ef-set</a>
+            <span class="enlace-description">Certifica tu nivel de ingles gratis.</span>
+        </div>
+        <div class="enlace-item">
+            <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="enlace-link">YouTube</a>
+            <span class="enlace-description">Plataforma de videos y entretenimiento.</span>
+        </div>
+        <div class="enlace-item">
+            <a href="https://www.wikipedia.org" target="_blank" rel="noopener noreferrer" class="enlace-link">Wikipedia</a>
+            <span class="enlace-description">Enciclopedia libre y colaborativa.</span>
+        </div>
+        <div class="enlace-item">
+            <a href="https://www.github.com" target="_blank" rel="noopener noreferrer" class="enlace-link">GitHub</a>
+            <span class="enlace-description">Plataforma para alojar y colaborar en proyectos de código.</span>
+        </div>
+        <div class="enlace-item">
+            <a href="https://www.stackoverflow.com" target="_blank" rel="noopener noreferrer" class="enlace-link">Stack Overflow</a>
+            <span class="enlace-description">Comunidad de preguntas y respuestas para programadores.</span>
+        </div>
+    </div>
 </div>
 {% endblock %}

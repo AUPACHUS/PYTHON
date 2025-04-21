@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Cursos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="animated-title text-center mb-4">Cursos Disponibles</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Cuadro 1 -->
+        <div class="col">
+            <div class="card h-100">
+                <img src="https://img.youtube.com/vi/mK8H9lY2xcM/0.jpg" class="card-img-top" alt="Curso de HTML y CSS">
+                <div class="card-body">
+                    <h5 class="card-title">Curso de HTML y CSS</h5>
+                    <p class="card-text">Aprende los fundamentos del desarrollo web con HTML y CSS.</p>
+                    <a href="https://www.youtube.com/watch?v=mK8H9lY2xcM" target="_blank" class="btn btn-primary">Ver curso</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuadro 2 -->
+        <div class="col">
+            <div class="card h-100">
+                <img src="https://img.youtube.com/vi/T1intZyhXDU/0.jpg" class="card-img-top" alt="Curso de Django">
+                <div class="card-body">
+                    <h5 class="card-title">Curso de Django</h5>
+                    <p class="card-text">Inicia tu camino en el desarrollo backend con Django.</p>
+                    <a href="https://www.youtube.com/watch?v=T1intZyhXDU" target="_blank" class="btn btn-primary">Ver curso</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cuadro 3 -->
+        <div class="col">
+            <div class="card h-100">
+                <img src="https://img.youtube.com/vi/3tFq1hWz8rQ/0.jpg" class="card-img-top" alt="Curso de JavaScript">
+                <div class="card-body">
+                    <h5 class="card-title">Curso de JavaScript</h5>
+                    <p class="card-text">Domina los fundamentos de JavaScript para desarrollo web.</p>
+                    <a href="https://www.youtube.com/watch?v=3tFq1hWz8rQ" target="_blank" class="btn btn-primary">Ver curso</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agrega más cuadros aquí -->
+        <div class="col">
+            <div class="card h-100">
+                <img src="https://img.youtube.com/vi/VIDEO_ID/0.jpg" class="card-img-top" alt="Título del curso">
+                <div class="card-body">
+                    <h5 class="card-title">Título del curso</h5>
+                    <p class="card-text">Descripción breve del contenido del curso.</p>
+                    <a href="https://www.youtube.com/watch?v=VIDEO_ID" target="_blank" class="btn btn-primary">Ver curso</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

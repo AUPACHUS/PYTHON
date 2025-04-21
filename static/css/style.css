@@ -148,3 +148,42 @@ body {
     color: #ffffff; /* Blanco para un fondo azul */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para mejorar la legibilidad */
 }
+
+/* Estilo para los enlaces de los PDFs */
+.pdf-link {
+    color: #000000; /* Negro */
+    text-decoration: none;
+}
+
+.pdf-link:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para los enlaces en la página de enlaces */
+.enlace-link {
+    color: #000000; /* Negro */
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.enlace-link:hover {
+    text-decoration: underline;
+}
+
+/* Estilo para la lista de enlaces */
+.enlace-item {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+}
+
+.enlace-description {
+    color: #555; /* Gris oscuro */
+    font-size: 0.9rem;
+}
