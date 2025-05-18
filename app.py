@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash, session
 import os
 import json
 from datetime import datetime
@@ -130,8 +130,18 @@ def register_user():
 # Ruta para la página de opiniones
 @app.route("/opinion")
 def opinion():
-    headlines = get_news()  # Obtener noticias actualizadas
-    opinions = load_data(OPINIONS_FILE)  # Cargar opiniones desde el archivo
+    url = "https://api.apitube.io/v1/news/everything?per_page=10"
+    headers = {
+        "X-API-Key": "api_live_wMikbbtvTMXb1dxOF9NXyieu5eB8m0DGNW0HUFWUQat"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        # Ajusta esto según la estructura real de la respuesta de apitube
+        headlines = [item.get("title", "Sin título") for item in data.get("data", [])]
+    else:
+        headlines = ["No se pudieron cargar las noticias."]
+    opinions = load_data(OPINIONS_FILE)
     return render_template("opinion.html", headlines=headlines, opinions=opinions)
 
 # Ruta para enviar opiniones
@@ -159,6 +169,39 @@ def cursos():
 @app.route("/enlaces")
 def enlaces():
     return render_template("enlaces.html")
+
+@app.before_request
+def require_login():
+    # Permitir acceso solo a login y static antes de iniciar sesión
+    if request.endpoint not in ('login', 'static') and 'username' not in session:
+        return redirect(url_for('login'))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        day = request.form.get("day")
+        if username and password and day:
+            session['username'] = username
+            session['day'] = day
+            flash(f"¡Bienvenido, {username}! Recuerda que hoy es {day}.")
+            return redirect(url_for("home"))
+        else:
+            flash("Por favor, completa todos los campos.")
+    return '''
+    <form method="post">
+        <h2>Registro</h2>
+        <label>Nombre:</label><br>
+        <input type="text" name="username" required><br>
+        <label>Contraseña:</label><br>
+        <input type="password" name="password" required><br>
+        <label>Día de la semana favorito:</label><br>
+        <input type="text" name="day" required><br>
+        <button type="submit">Entrar</button>
+    </form>
+    <p>Por favor, pon tu nombre y un día de la semana favorito para continuar.</p>
+    '''
 
 if __name__ == "__main__":
     app.run(debug=True)
