@@ -187,3 +187,20 @@ body {
     color: #555; /* Gris oscuro */
     font-size: 0.9rem;
 }
+
+/* Estilo para el texto arcoíris */
+.rainbow-text {
+    font-size: 1em !important; /* Más pequeño que el resto */
+    font-weight: bold;
+    background: linear-gradient(270deg, #ff0080, #7928ca, #00bfff, #00ff6a, #ffeb3b, #ff0080);
+    background-size: 1200% 1200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 6s ease-in-out infinite;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

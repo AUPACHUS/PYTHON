@@ -5,6 +5,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import time
+import feedparser
 
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Necesario para mostrar mensajes flash
@@ -130,17 +131,16 @@ def register_user():
 # Ruta para la página de opiniones
 @app.route("/opinion")
 def opinion():
-    url = "https://api.apitube.io/v1/news/everything?per_page=10"
-    headers = {
-        "X-API-Key": "api_live_wMikbbtvTMXb1dxOF9NXyieu5eB8m0DGNW0HUFWUQat"
-    }
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        data = response.json()
-        # Ajusta esto según la estructura real de la respuesta de apitube
-        headlines = [item.get("title", "Sin título") for item in data.get("data", [])]
-    else:
-        headlines = ["No se pudieron cargar las noticias."]
+    # Obtener titulares de Meneame (RSS)
+    feed_url = "https://www.meneame.net/rss"
+    feed = feedparser.parse(feed_url)
+    headlines = []
+    for entry in feed.entries[:10]:  # Solo los 10 primeros titulares
+        headlines.append({
+            "title": entry.title,
+            "url": entry.link
+        })
+
     opinions = load_data(OPINIONS_FILE)
     return render_template("opinion.html", headlines=headlines, opinions=opinions)
 
