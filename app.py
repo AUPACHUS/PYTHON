@@ -130,17 +130,19 @@ def register_user():
 # Ruta para la página de opiniones
 @app.route("/opinion")
 def opinion():
-    url = "https://api.apitube.io/v1/news/everything?per_page=10"
-    headers = {
-        "X-API-Key": "api_live_wMikbbtvTMXb1dxOF9NXyieu5eB8m0DGNW0HUFWUQat"
-    }
-    response = requests.get(url, headers=headers)
+    # Usar el feed RSS de meneame para obtener las últimas noticias
+    url = "https://www.meneame.net/rss"
+    response = requests.get(url)
+    headlines = []
     if response.status_code == 200:
-        data = response.json()
-        # Ajusta esto según la estructura real de la respuesta de apitube
-        headlines = [item.get("title", "Sin título") for item in data.get("data", [])]
+        soup = BeautifulSoup(response.content, "xml")
+        for item in soup.find_all("item")[:10]:
+            title = item.title.get_text(strip=True)
+            link = item.link.get_text(strip=True)
+            headlines.append({"title": title, "url": link})
     else:
-        headlines = ["No se pudieron cargar las noticias."]
+        headlines = [{"title": "No se pudieron cargar las noticias.", "url": "https://www.meneame.net/"}]
+
     opinions = load_data(OPINIONS_FILE)
     return render_template("opinion.html", headlines=headlines, opinions=opinions)
 
@@ -162,9 +164,9 @@ def submit_opinion():
 def social():
     return render_template("social.html")
 
-@app.route("/cursos")
-def cursos():
-    return render_template("cursos.html")
+@app.route("/youtube")
+def youtube():
+    return render_template("Youtube.html")  # O "Youtube.html" si así se llama tu plantilla
 
 @app.route("/enlaces")
 def enlaces():

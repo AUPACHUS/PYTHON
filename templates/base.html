@@ -1,3 +1,4 @@
+<!-- filepath: c:\Users\JESUS\OneDrive\Escritorio\python\PYTHON\templates\base.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,14 +8,22 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        html, body {
-            font-size: 1.3em !important;
+        html, body { font-size: 1.3em !important; }
+        h1, h2, h3, h4, h5, h6 { font-size: 1.2em; }
+        label, input, textarea, button, .list-group-item, .form-label { font-size: 1.1em; }
+        .rainbow-text {
+            font-size: 1em !important;
+            font-weight: bold;
+            background: linear-gradient(270deg, #ff0080, #7928ca, #00bfff, #00ff6a, #ffeb3b, #ff0080);
+            background-size: 1200% 1200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 6s ease-in-out infinite;
         }
-        h1, h2, h3, h4, h5, h6 {
-            font-size: 1.2em;
-        }
-        label, input, textarea, button, .list-group-item, .form-label {
-            font-size: 1.1em;
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
@@ -22,70 +31,32 @@
     <div id="background-container"></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" aria-label="Ir al perfil de Twitch">Aupachus</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('home') }}">Inicio</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('galeria') }}">Galería de fotos</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('inteligencia_artificial') }}">Lanzadera IA</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('ver_pdfs') }}">PDF SOURCE</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('social') }}">Redes Sociales</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('enlaces') }}">Enlaces</a></li>
+                    <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('opinion') }}">¿Y tú qué opinas?</a></li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('home') }}" aria-current="page">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('galeria') }}">Galería de fotos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('inteligencia_artificial') }}">Lanzadera IA</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('ver_pdfs') }}">PDF SOURCE</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('social') }}">Redes Sociales</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('enlaces') }}">Enlaces</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('cursos') }}">Cursos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('opinion') }}">¿Y tú qué opinas?</a>
+                        <a class="btn btn-warning mx-1 my-1" href="{{ url_for('youtube') }}">Youtube</a>
                     </li>
                 </ul>
+                <a class="btn btn-warning ms-auto" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" aria-label="Ir al perfil de Twitch">
+                    Aupachus Twitch
+                </a>
             </div>
         </div>
     </nav>
-
-    <!-- Reproductor de música -->
-    <div class="text-center mb-4">
-        <div class="btn-group">
-            <button id="prevButton" class="btn btn-secondary">⏮ Anterior</button>
-            <button id="playButton" class="btn btn-success">▶ Reproducir</button>
-            <button id="nextButton" class="btn btn-secondary">⏭ Siguiente</button>
-            <button id="stopButton" class="btn btn-danger">■ Detener</button>
-        </div>
-        <div class="mt-3">
-            <label for="trackSelector">Seleccionar pista:</label>
-            <select id="trackSelector" class="form-select w-50 mx-auto">
-                <option value="0">Pista 1</option>
-                <option value="1">Pista 2</option>
-                <option value="2">Pista 3</option>
-            </select>
-        </div>
-        <div class="mt-3">
-            <label for="volumeControl">Volumen:</label>
-            <input type="range" class="form-range w-50 mx-auto" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
-        </div>
-    </div>
-
-    <!-- Contenido principal -->
     <div class="container mt-4">
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </div>
-
-    <script src="../static/js/background.js"></script>
+    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
     <script src="{{ url_for('static', filename='js/player.js') }}"></script>
 </body>
 </html>

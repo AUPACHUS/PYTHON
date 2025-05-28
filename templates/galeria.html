@@ -17,8 +17,27 @@
 </div>
 {% endblock %}
 
-<li class="nav-item">
-    <a class="nav-link" href="{{ url_for('social') }}">Redes Sociales</a>
-</li>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('home') }}">Inicio</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('galeria') }}">Galería de fotos</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('inteligencia_artificial') }}">Lanzadera IA</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('ver_pdfs') }}">PDF SOURCE</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('social') }}">Redes Sociales</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('enlaces') }}">Enlaces</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('opinion') }}">¿Y tú qué opinas?</a></li>
+                <li class="nav-item"><a class="btn btn-warning mx-1 my-1" href="{{ url_for('cursos') }}">Cursos</a></li>
+            </ul>
+            <a class="btn btn-warning ms-auto" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" aria-label="Ir al perfil de Twitch">
+                Aupachus Twitch
+            </a>
+        </div>
+    </div>
+</nav>
 
 <link rel="stylesheet" href="../static/css/style.css">

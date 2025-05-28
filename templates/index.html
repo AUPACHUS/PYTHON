@@ -1,34 +1,50 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Inicio{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
     <h1 class="animated-title text-center mb-4">Bienvenido a mi Web</h1>
     <div class="text-readable">
-        <p class="text-center mb-4">Soy Aupachus, Técnico superior en sistemas de telecomunicaciones e informáticos.</p>
-        <p class="text-center mb-4">En este sitio encontrarás una variedad de recursos, desde cursos de programación hasta tutoriales sobre herramientas útiles.</p>
-        <p class="text-center mb-4">He creado este espacio para compartir conocimientos y ayudar a otros a aprender.</p>
-        <p class="text-center mb-4">Si tienes alguna pregunta o sugerencia, no dudes en contactarme.</p>
-        <p class="text-center mb-4">¡Espero que te sea tan útil como a mí!</p>
+        <div class="text-center mb-5">
+            <img src="{% static 'img/1(11).png' %}"
+                 alt="Aupachus" 
+                 class="img-fluid rounded-circle profile-image"
+                 loading="lazy">
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <p class="text-center mb-4">Hello! I'm Jesús Marín, but you can call me Aupachus.</p>
+                <p class="text-center mb-4">Welcome to my website, where I share resources and knowledge about programming and technology.</p>
+                <p class="text-center mb-4">Here, you’ll find courses, tutorials, and useful links to learn and improve your skills.</p>
+                <p class="text-center mb-4">I hope you enjoy your visit and find what you’re looking for.</p>
+                <p class="text-center mb-4">Thank you for being here!</p>
+            </div>
+            <div class="col-md-6">
+                <p class="text-center mb-4">¡Hola! Soy Jesús Marín, pero puedes llamarme Aupachus.</p>
+                <p class="text-center mb-4">Comparto recursos y conocimientos sobre programación y tecnología.</p>
+                <p class="text-center mb-4">Aquí encontrarás cursos, tutoriales y enlaces útiles para aprender y mejorar tus habilidades.</p>
+                <p class="text-center mb-4">Espero que disfrutes de tu visita y encuentres lo que buscas.</p>
+                <p class="text-center mb-4">¡Gracias por estar aquí!</p>
+                <p class="text-center mb-4">Si tienes alguna pregunta o sugerencia, no dudes en contactarme.</p>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="mailto:artemugiocursojava@gmail.com" class="btn btn-outline-success contact-email-link">
+                Escríbeme un correo
+            </a>
+        </div>
     </div>
-
     <div class="text-center">
-        <a href="{{ url_for('inteligencia_artificial') }}" class="btn btn-info">Explorar Inteligencia Artificial</a>
-        <a href="{{ url_for('ver_pdfs') }}" class="btn btn-primary">Ver PDFs disponibles</a>
-        <a href="{{ url_for('galeria') }}" class="btn btn-success">Galería de fotos</a>
-        <a href="{{ url_for('social') }}" class="btn btn-warning">Redes Sociales</a>    
-        <a href="{{ url_for('enlaces') }}" class="btn btn-danger">Enlaces</a>
-        <a href="{{ url_for('cursos') }}" class="btn btn-secondary">Cursos</a>
-        <a href="{{ url_for('opinion') }}" class="btn btn-dark">¿Y tú qué opinas?</a>
+        <a href="{% url 'inteligencia_artificial' %}" class="btn btn-info">Explorar Inteligencia Artificial</a>
+        <a href="{% url 'ver_pdfs' %}" class="btn btn-primary">Ver PDFs disponibles</a>
+        <a href="{% url 'galeria' %}" class="btn btn-success">Galería de fotos</a>
+        <a href="{% url 'social' %}" class="btn btn-warning">Redes Sociales</a>    
+        <a href="{% url 'enlaces' %}" class="btn btn-danger">Enlaces</a>
+        <a href="{% url 'cursos' %}" class="btn btn-secondary">Cursos</a>
+        <a href="{% url 'opinion' %}" class="btn btn-dark">¿Y tú qué opinas?</a>
     </div>
-
-    <div class="text-center mb-5">
-        <img src="../static/img/1(11).png" 
-             alt="Aupachus" 
-             class="img-fluid rounded-circle" 
-             style="width: 250px; height: 250px;"
-             loading="lazy">
-    </div>
+    <p class="rainbow-text mt-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br>
+    </p>
 </div>
 {% endblock %}

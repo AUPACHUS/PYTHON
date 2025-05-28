@@ -5,14 +5,15 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="animated-title text-center mb-4">¿Y tú qué opinas?</h1>
-    <p class="text-center">Comparte tu opinión sobre las noticias más relevantes del día.</p>
-
-    <!-- Noticias relevantes -->
     <div class="mb-4">
         <h2 class="text-center">Noticias del día</h2>
         <ul class="list-group">
             {% for headline in headlines %}
-                <li class="list-group-item">{{ headline }}</li>
+                <li class="list-group-item">
+                    <a href="{{ headline.url }}" target="_blank" rel="noopener noreferrer">
+                        {{ headline.title }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     </div>
