@@ -173,6 +173,74 @@
                     }
                 });
             }
+
+            // Efecto de explosión de letras al pasar el ratón sobre elementos de texto elegibles
+            const hoverAnimatedElementsCooldown = new Set(); // Para el enfriamiento
+
+            document.body.addEventListener('mouseover', function(event) {
+                let target = event.target;
+
+                // Si el objetivo directo es un nodo de texto, usar su elemento padre
+                if (target.nodeType === Node.TEXT_NODE) {
+                    target = target.parentElement;
+                }
+
+                // Asegurarse de que el objetivo es un HTMLElement
+                if (!(target instanceof HTMLElement)) {
+                    return;
+                }
+
+                // Selectores para elementos elegibles (ajusta según sea necesario)
+                const eligibleSelectors = [
+                    'p',
+                    'h1:not(.animated-title)', // Excluir títulos principales con animación propia
+                    'h2:not(.animated-title)',
+                    'h3:not(.animated-title)',
+                    'h4', 'h5', 'h6',
+                    'li',
+                    'span:not(.navbar-toggler-icon)', // Spans generales, excluyendo iconos de Bootstrap
+                    'a', // Hacer elegibles los enlaces genéricos
+                    'td', 'th', // Celdas de tablas
+                    'label:not([for="trackSelector"]):not([for="volumeControl"])',
+                    // Añadir elementos comunes de formato en línea
+                    'strong', 'em', 'b', 'i', 'u', 'small', 'mark'
+                ].join(',');
+
+                // Selectores para elementos a excluir explícitamente
+                const exclusionSelectors = [
+                    '.navbar-nav .nav-link', // Ya tienen animación temporizada
+                    'a[href^="mailto:"]',    // Ya tiene animación temporizada
+                    'h1.animated-title',     // Ya tiene animación temporizada
+                    'div.text-center:last-of-type > a.btn', // Botones de sección en index.html
+                    '.navbar-brand', // Excluir el brand de la navbar
+                    '#translatable-welcome-text p', // El bloque de bienvenida tiene animación de caída
+                    '#githubDropdown', '.dropdown-item', // Menú desplegable de GitHub
+                    '#prevButton', '#playButton', '#nextButton', '#stopButton', // Botones del reproductor
+                    '#trackSelector', '#volumeControl', // Controles del reproductor
+                    'button[data-lang]', // Botones de traducción
+                    '.btn', // Excluir botones genéricos para evitar conflictos (algunos ya están cubiertos)
+                    'script', 'style', 'textarea', 'input', 'select', 'option', 'button' // Elementos no textuales o interactivos
+                ].join(',');
+
+                if (target.matches(eligibleSelectors) && !target.closest(exclusionSelectors)) {
+                    const textToAnimate = target.textContent;
+                    if (textToAnimate && textToAnimate.trim() !== '') {
+                        if (!hoverAnimatedElementsCooldown.has(target)) {
+                            const style = window.getComputedStyle(target);
+                            if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+                                return; // No animar elementos no visibles
+                            }
+
+                            animateTextFlyOut(textToAnimate, target);
+                            hoverAnimatedElementsCooldown.add(target);
+
+                            setTimeout(() => {
+                                hoverAnimatedElementsCooldown.delete(target);
+                            }, 3500); // Tiempo de enfriamiento (un poco más que la duración máx. de la animación)
+                        }
+                    }
+                }
+            });
         });
     </script>
 </body>
