@@ -6,19 +6,15 @@
 <div class="container">
     <h1 class="animated-title text-center mb-4">Galería de Fotos</h1>
 
-    <!-- Galería de imágenes -->
-    <div class="gallery-container">
+    <!-- Galería de imágenes con Bootstrap Grid -->
+    <div class="row">
         {% for image in images %}
-        <div class="gallery-item">
-            <img src="{{ url_for('static', filename='img/' + image) }}" alt="{{ image }}" class="img-fluid rounded">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
+            <div class="gallery-item">
+                <img src="{{ url_for('static', filename='img/' + image) }}" alt="Imagen de la galería: {{ image }}" class="img-fluid rounded shadow-sm">
+            </div>
         </div>
         {% endfor %}
     </div>
 </div>
 {% endblock %}
-
-<li class="nav-item">
-    <a class="nav-link" href="{{ url_for('social') }}">Redes Sociales</a>
-</li>
-
-<link rel="stylesheet" href="../static/css/style.css">

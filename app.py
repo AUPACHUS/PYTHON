@@ -26,6 +26,20 @@ USERS_FILE = "users.json"
 OPINIONS_FILE = "opinions.json"
 NEWS_FILE = "news.json"
 
+# Función para cargar variables de entorno desde un archivo .ENV
+def load_env_vars(filepath=".ENV"):
+    env_vars = {}
+    try:
+        with open(filepath, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and '=' in line and not line.startswith('#'):
+                    key, value = line.split('=', 1)
+                    env_vars[key.strip()] = value.strip().strip('"') # Elimina comillas si las hay
+    except FileNotFoundError:
+        app.logger.warning(f"Archivo de entorno {filepath} no encontrado. Las claves API podrían faltar.")
+    return env_vars
+
 # Cargar datos
 def load_data(file):
     try:
@@ -53,50 +67,62 @@ def save_data(file, data):
     with open(file, "w") as f:
         json.dump(data, f, indent=4)
 
-# Función para obtener noticias de Reuters
-def fetch_reuters_news():
-    url = "https://www.reuters.com/world/"
-    base_reuters_url = "https://www.reuters.com"
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()  # Raise an exception for HTTP errors
-    except requests.exceptions.RequestException as e:
-        app.logger.error(f"Error fetching Reuters news: {e}")
+# Cargar la clave API de NewsAPI al iniciar la aplicación
+# ENV_CONFIG = load_env_vars() # Anteriormente se cargaba desde el archivo .ENV
+# NEWSAPI_API_KEY = ENV_CONFIG.get("NEWSAPI_API_KEY") # Anteriormente se obtenía de ENV_CONFIG
+NEWSAPI_API_KEY = "5dacd13ae1244d20bf78bd9c4d852e66" # Clave API directamente asignada
+
+# Función para obtener noticias de NewsAPI
+def fetch_newsapi_news():
+    if not NEWSAPI_API_KEY:
+        app.logger.error("La clave API de NewsAPI no está configurada. No se pueden obtener noticias.")
         return []
 
-    soup = BeautifulSoup(response.content, "html.parser")
+    # Obtener titulares principales de España, máximo 6 artículos
+    api_url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={NEWSAPI_API_KEY}&pageSize=6"
+
+    try:
+        response = requests.get(api_url, timeout=10)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        api_response_data = response.json()
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"Error al contactar NewsAPI: {e}")
+        return []
+    except json.JSONDecodeError as e:
+        app.logger.error(f"Error al decodificar la respuesta JSON de NewsAPI: {e}")
+        return []
 
     headlines_data = []
-    processed_urls = set() # To avoid duplicates
+    if api_response_data.get("status") == "ok":
+        articles = api_response_data.get("articles", [])
+        for article in articles:
+            title = article.get("title")
+            article_url = article.get("url")
+            # Filtrar títulos vacíos, marcados como eliminados, y asegurar que hay URL
+            if title and article_url and "[Removed]" not in title and title.strip():
+                headlines_data.append({"title": title, "url": article_url})
+            # Aunque pedimos pageSize=6, aseguramos no pasar de 6 por si acaso
+            if len(headlines_data) >= 6:
+                break
+        if not headlines_data and articles:
+            app.logger.info("NewsAPI devolvió artículos, pero todos fueron filtrados o no cumplieron los criterios.")
+        elif not articles:
+            app.logger.info("NewsAPI devolvió status 'ok' pero la lista de artículos estaba vacía.")
 
-    # Selectors might need adjustment if Reuters changes their HTML structure.
-    # This attempts to find elements containing title text and their associated links.
-    # Common pattern: title text is within an <a> tag, or an <a> tag is a close parent.
-    title_text_elements = soup.select(".story-title, .MediaStoryCard__title__2PHMe, [data-testid='Heading']")
-
-    for text_el in title_text_elements:
-        if len(headlines_data) >= 6:  # Limitar a 6 noticias
-            break
-
-        title = text_el.get_text(strip=True)
-        
-        # Find the closest ancestor <a> tag with an href
-        link_tag = text_el.find_parent('a', href=True)
-        
-        # If the text_el itself is an <a> tag
-        if not link_tag and text_el.name == 'a' and text_el.has_attr('href'):
-            link_tag = text_el
-            
-        if title and link_tag and len(title) > 5: # Basic filter for meaningful titles
-            href = link_tag.get('href')
-            if href:
-                absolute_url = urljoin(base_reuters_url, href)
-                if absolute_url not in processed_urls: # Avoid duplicates
-                    headlines_data.append({"title": title, "url": absolute_url})
-                    processed_urls.add(absolute_url)
+    else:
+        app.logger.error(f"NewsAPI devolvió un error: Status: {api_response_data.get('status')}, Mensaje: {api_response_data.get('message')}")
 
     save_data(NEWS_FILE, {"last_updated": time.time(), "headlines": headlines_data})
     return headlines_data
+
+# La función fetch_rtve_news() ya no es necesaria, la comentamos o eliminamos.
+# def fetch_rtve_news():
+#     url = "https://www.rtve.es/noticias/"
+#     base_rtve_url = "https://www.rtve.es"
+#     # ... (resto del código de fetch_rtve_news) ...
+#     save_data(NEWS_FILE, {"last_updated": time.time(), "headlines": headlines_data})
+#     return headlines_data
+
 
 # Función para cargar noticias (y actualizarlas si es necesario)
 def get_news():
@@ -115,11 +141,11 @@ def get_news():
     last_updated = news_data.get("last_updated", 0) # Safely get, defaults to 0 if key missing or news_data is {}
     headlines = news_data.get("headlines", [])     # Safely get, defaults to [] if key missing or news_data is {}
 
-    # Actualizar noticias si han pasado más de 5 días o si no hay titulares
+    # Actualizar noticias si ha pasado más de 1 hora o si no hay titulares
     # Also update if news_data was empty/corrupt (which would make last_updated=0 and headlines=[])
-    if time.time() - last_updated > 5 * 24 * 60 * 60 or not headlines or not news_data:
+    if time.time() - last_updated > 1 * 60 * 60 or not headlines or not news_data: # Actualizar cada hora
         app.logger.info(f"Updating news. Reason: timeout, no headlines, or problematic file.")
-        headlines = fetch_reuters_news() # fetch_reuters_news fetches, saves, and returns the new headlines list
+        headlines = fetch_newsapi_news() # Llamar a la nueva función para NewsAPI
     return headlines
 
 # Context processor para inyectar datos compartidos en las plantillas

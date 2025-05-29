@@ -12,11 +12,23 @@
         <h2 class="text-center">Noticias del día</h2>
         <ul class="list-group">
             {% for headline in headlines %}
-                <li class="list-group-item">
-                    <a href="{{ headline.url }}" target="_blank" rel="noopener noreferrer">
-                        {{ headline.title }}
-                    </a>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{{ headline.url }}" target="_blank" rel="noopener noreferrer">
+                            {{ headline.title }}
+                        </a>
+                    </div>
+                    <div class="ms-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="translateText('{{ headline.title | e }}', 'es')">
+                            A Español
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="translateText('{{ headline.title | e }}', 'en')">
+                            A Inglés
+                        </button>
+                    </div>
                 </li>
+            {% else %}
+                <li class="list-group-item">No hay noticias disponibles en este momento.</li>
             {% endfor %}
         </ul>
     </div>
@@ -54,4 +66,14 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+function translateText(text, targetLang) {
+    const encodedText = encodeURIComponent(text);
+    // sl=auto detecta el idioma de origen automáticamente
+    const translateUrl = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodedText}&op=translate`;
+    window.open(translateUrl, '_blank');
+}
+</script>
+
 {% endblock %}

@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="animated-title text-center mb-4">Bienvenido a mi Web</h1>
+    <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenido a mi Web</h1>
     <div class="text-readable">
    <div class="text-center mb-5">
         <img src="../static/img/1(11).png" 
@@ -30,6 +30,32 @@
         Escríbeme un correo
     </a>
 </div>
+    <!-- Reproductor de música -->
+    <div class="text-center mb-4">
+        <div class="btn-group">
+            <button id="prevButton" class="btn btn-secondary">⏮ Anterior</button>
+            <button id="playButton" class="btn btn-success">▶ Reproducir</button>
+            <button id="nextButton" class="btn btn-secondary">⏭ Siguiente</button>
+            <button id="stopButton" class="btn btn-danger">■ Detener</button>
+        </div>
+        <div class="mt-3">
+            <label for="trackSelector">Seleccionar pista:</label>
+            <select id="trackSelector" class="form-select w-auto mx-auto d-inline-block" style="max-width: 300px;">
+                {% if music_tracks %}
+                    {% for track in music_tracks %}
+                        <option value="{{ loop.index0 }}">{{ track.name }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="">No hay pistas disponibles</option>
+                {% endif %}
+            </select>
+        </div>
+        <div class="mt-3">
+            <label for="volumeControl">Volumen:</label>
+            <input type="range" class="form-range w-50 mx-auto" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
+        </div>
+    </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const mailBtn = document.querySelector('a[href^="mailto:"]');

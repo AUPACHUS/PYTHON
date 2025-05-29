@@ -199,3 +199,20 @@ a:hover {
 .track-selector-custom {
     max-width: 300px;
 }
+
+/* Animación de texto arcoíris para el título principal */
+@keyframes titleRainbowAnimation {
+    0%   {color: red;}
+    14%  {color: orange;}
+    28%  {color: yellow;}
+    42%  {color: green;}
+    57%  {color: blue;}
+    71%  {color: indigo;}
+    85%  {color: violet;}
+    100% {color: red;}
+}
+
+.title-rainbow-effect {
+    animation: titleRainbowAnimation 6s infinite linear;
+    /* La propiedad 'color' de .animated-title o inline será anulada por la animación */
+}
