@@ -3,6 +3,59 @@
 {% block title %}Galería de Fotos{% endblock %}
 
 {% block content %}
+
+<!-- Elemento para el overlay oscuro -->
+<div id="galleryPageOverlay"></div>
+
+<style>
+    /* Estilos para el overlay oscuro */
+    #galleryPageOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.85); /* Negro semi-transparente, puedes ajustar la opacidad */
+        opacity: 0;
+        visibility: hidden;
+        z-index: 1040; /* Por debajo de la imagen ampliada, pero por encima del contenido normal */
+        transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s; /* Transición suave para opacidad */
+    }
+
+    #galleryPageOverlay.active {
+        opacity: 1;
+        visibility: visible;
+        transition-delay: 0s; /* Asegura que la visibilidad cambie inmediatamente al activarse */
+    }
+
+    /* Estilos para los ítems de la galería y la imagen al pasar el ratón */
+    .gallery-item {
+        /* position: relative; // No es estrictamente necesario aquí pero puede ser útil para otros efectos */
+    }
+
+    .gallery-item img {
+        display: block; /* Asegura un comportamiento de bloque consistente */
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        cursor: pointer;
+        width: 100%; /* Asegura que la imagen ocupe el contenedor de la columna */
+    }
+
+    .gallery-item img.hovered {
+        transform: scale(1.75); /* Amplía la imagen al 175% de su tamaño original */
+        position: relative; /* Necesario para que z-index funcione correctamente sobre el overlay */
+        z-index: 1041; /* Por encima del overlay */
+        box-shadow: 0 15px 35px rgba(0,0,0,0.5); /* Sombra más pronunciada para destacar */
+    }
+
+    /* Ajuste para asegurar que las imágenes no se corten si el contenedor de la columna es muy restrictivo.
+       Esto podría necesitar más ajustes dependiendo del layout exacto y el tamaño de las imágenes.
+       En muchos casos, el `transform: scale()` junto con `z-index` es suficiente.
+    */
+    .col-lg-3, .col-md-4, .col-sm-6, .col-12 {
+        /* overflow: visible; // Descomentar si las imágenes escaladas se cortan, pero puede afectar el layout */
+    }
+</style>
+
 <div class="container">
     <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Galería de Fotos</h1>
 
@@ -17,4 +70,29 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const galleryImages = document.querySelectorAll('.gallery-item img');
+        const overlay = document.getElementById('galleryPageOverlay');
+
+        if (!overlay) {
+            console.error('Elemento de overlay #galleryPageOverlay no encontrado.');
+            return;
+        }
+
+        galleryImages.forEach(img => {
+            img.addEventListener('mouseover', () => {
+                overlay.classList.add('active');
+                img.classList.add('hovered');
+            });
+
+            img.addEventListener('mouseout', () => {
+                overlay.classList.remove('active');
+                img.classList.remove('hovered');
+            });
+        });
+    });
+</script>
+
 {% endblock %}
