@@ -127,7 +127,7 @@ def fetch_newsapi_news():
                 flash("Usuario registrado exitosamente.")
                 return redirect(url_for("inteligencia_artificial"))
             # ...
-            vacíos, marcados como eliminados, y asegurar que hay URL
+            # vacíos, marcados como eliminados, y asegurar que hay URL
             if title and article_url and "[Removed]" not in title and title.strip():
                 headlines_data.append({"title": title, "url": article_url})
             # Aunque pedimos pageSize=6, aseguramos no pasar de 6 por si acaso
