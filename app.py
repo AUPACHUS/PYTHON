@@ -98,7 +98,36 @@ def fetch_newsapi_news():
         for article in articles:
             title = article.get("title")
             article_url = article.get("url")
-            # Filtrar títulos vacíos, marcados como eliminados, y asegurar que hay URL
+            # Filtrar títulos # (app.py - función register_user ya revisada anteriormente)
+            # ...
+            @app.route("/register_user", methods=["POST"])
+            def register_user():
+                users = load_data(USERS_FILE)
+                username = request.form.get("username") # Usar .get() para evitar KeyError
+                email = request.form.get("email")
+                password = request.form.get("password")
+            
+                # Validaciones básicas (ejemplos)
+                if not username or not email or not password:
+                    flash("Todos los campos son requeridos (nombre de usuario, email, contraseña).")
+                    return redirect(url_for("inteligencia_artificial"))
+            
+                if len(password) < 8: 
+                    flash("La contraseña debe tener al menos 8 caracteres.")
+                    return redirect(url_for("inteligencia_artificial"))
+            
+                # Validar si el usuario ya existe
+                if any(user["email"] == email for user in users):
+                    flash("El usuario ya está registrado.")
+                    return redirect(url_for("inteligencia_artificial"))
+            
+                hashed_password = generate_password_hash(password) 
+                users.append({"username": username, "email": email, "password": hashed_password}) 
+                save_data(USERS_FILE, users)
+                flash("Usuario registrado exitosamente.")
+                return redirect(url_for("inteligencia_artificial"))
+            # ...
+            vacíos, marcados como eliminados, y asegurar que hay URL
             if title and article_url and "[Removed]" not in title and title.strip():
                 headlines_data.append({"title": title, "url": article_url})
             # Aunque pedimos pageSize=6, aseguramos no pasar de 6 por si acaso
