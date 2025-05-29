@@ -13,6 +13,12 @@ app.secret_key = "secret_key"  # Necesario para mostrar mensajes flash
 app.config['PDF_FOLDER'] = 'static/pdfs'
 os.makedirs(app.config['PDF_FOLDER'], exist_ok=True)
 
+# Carpetas para audio e imágenes de fondo
+AUDIO_FOLDER_NAME = 'audio'
+BACKGROUND_IMG_FOLDER_NAME = os.path.join('img', 'backgrounds')
+os.makedirs(os.path.join(app.static_folder, AUDIO_FOLDER_NAME), exist_ok=True)
+os.makedirs(os.path.join(app.static_folder, BACKGROUND_IMG_FOLDER_NAME), exist_ok=True)
+
 # Archivos para almacenar datos
 USERS_FILE = "users.json"
 OPINIONS_FILE = "opinions.json"
@@ -59,6 +65,32 @@ def get_news():
 
     return headlines
 
+# Context processor para inyectar datos compartidos en las plantillas
+@app.context_processor
+def inject_shared_data():
+    # Pistas de música
+    music_tracks_data = []
+    audio_dir_path = os.path.join(app.static_folder, AUDIO_FOLDER_NAME)
+    if os.path.exists(audio_dir_path):
+        valid_audio_files = sorted([f for f in os.listdir(audio_dir_path) if f.lower().endswith('.mp3')])
+        for i, f_name in enumerate(valid_audio_files):
+            # Intenta crear un nombre más amigable, quitando la extensión y reemplazando guiones bajos
+            track_name_base = os.path.splitext(f_name)[0].replace('_', ' ').replace('-', ' ')
+            music_tracks_data.append({"name": f"{track_name_base.title()}", "filename": f_name})
+
+    # Imágenes de fondo
+    background_images_data = []
+    background_img_dir_path = os.path.join(app.static_folder, BACKGROUND_IMG_FOLDER_NAME)
+    if os.path.exists(background_img_dir_path):
+        background_images_data = sorted([
+            f for f in os.listdir(background_img_dir_path)
+            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+        ])
+    return dict(
+        music_tracks=music_tracks_data,
+        background_images=background_images_data,
+        current_endpoint=request.endpoint # Para la navegación activa
+    )
 # Ruta principal
 @app.route("/")
 def home():
