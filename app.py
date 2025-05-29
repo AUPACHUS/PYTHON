@@ -279,4 +279,9 @@ def enlaces():
     return render_template("enlaces.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Para desarrollo local, puedes activar el debug explícitamente.
+    # En producción, el servidor WSGI (Gunicorn) ejecutará la app,
+    # y el modo debug debería estar desactivado.
+    # Las plataformas de hosting suelen permitir configurar FLASK_DEBUG=0 como variable de entorno.
+    # Si FLASK_DEBUG no está configurada, Flask _DEBUG se establece en False por defecto si no se especifica en app.config o app.run().
+    app.run(host='0.0.0.0', port=5000, debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
