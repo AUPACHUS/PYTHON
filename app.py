@@ -25,9 +25,10 @@ os.makedirs(app.config['PDF_FOLDER'], exist_ok=True)
 
 # Carpetas para audio e imágenes de fondo
 AUDIO_FOLDER_NAME = 'audio'
-BACKGROUND_IMG_FOLDER_NAME = os.path.join('img', 'backgrounds')
+# Usaremos la carpeta 'img' directamente para las imágenes de fondo/galería
+GALLERY_IMAGES_FOLDER_NAME = 'img' # Relativo a la carpeta static
 os.makedirs(os.path.join(app.static_folder, AUDIO_FOLDER_NAME), exist_ok=True)
-os.makedirs(os.path.join(app.static_folder, BACKGROUND_IMG_FOLDER_NAME), exist_ok=True)
+os.makedirs(os.path.join(app.static_folder, GALLERY_IMAGES_FOLDER_NAME), exist_ok=True)
 
 # Archivos para almacenar datos
 USERS_FILE = "users.json"
@@ -171,19 +172,23 @@ def inject_shared_data():
             music_tracks_data.append({"name": f"{track_name_base.title()}", "filename": f_name})
 
     # Imágenes de fondo
-    background_images_data = []
-    background_img_dir_path = os.path.join(app.static_folder, BACKGROUND_IMG_FOLDER_NAME)
-    if os.path.exists(background_img_dir_path):
-        background_images_data = sorted([
-            f for f in os.listdir(background_img_dir_path)
-            if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
+    # Usaremos las imágenes de la carpeta principal de la galería (static/img/)
+    background_images_list = []
+    actual_gallery_img_dir_path = os.path.join(app.static_folder, GALLERY_IMAGES_FOLDER_NAME)
+
+    if os.path.exists(actual_gallery_img_dir_path):
+        background_images_list = sorted([
+            f for f in os.listdir(actual_gallery_img_dir_path)
+            if os.path.isfile(os.path.join(actual_gallery_img_dir_path, f)) and \
+               f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))
         ])
     return dict(
         music_tracks=music_tracks_data,
-        background_images=background_images_data,
+        background_images=background_images_list, # Lista de nombres de archivo
         current_endpoint=request.endpoint, # Para la navegación activa
         audio_folder_name=AUDIO_FOLDER_NAME,
-        background_img_folder_name=BACKGROUND_IMG_FOLDER_NAME
+        # Nombre de la carpeta para construir URLs de imágenes de fondo/galería
+        gallery_img_folder_for_url=GALLERY_IMAGES_FOLDER_NAME
     )
 # Ruta principal
 @app.route("/")

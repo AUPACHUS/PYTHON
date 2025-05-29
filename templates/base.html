@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div id="background-container"></div>
+    <div id="dynamic-page-background"></div> <!-- Nuevo contenedor para el fondo dinámico -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" aria-label="Ir al perfil de Twitch">Aupachus</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link {% if current_endpoint == 'home' %}active{% endif %}"
@@ -76,20 +76,21 @@
     <!-- Datos para JavaScript -->
     <script>
         const APP_TRACKS = [
-            {% for track in music_tracks %}
-                "{{ url_for('static', filename='audio/' + track.filename) }}"{% if not loop.last %},{% endif %}
-            {% endfor %}
+            {%- for track in music_tracks -%}
+                "{{ url_for('static', filename=(audio_folder_name + '/' + track.filename)) }}"{%- if not loop.last -%},{%- endif -%}
+            {%- endfor -%}
         ];
-        const APP_BACKGROUND_IMAGES = [
-            {% for image_filename in background_images %}
-                "{{ url_for('static', filename=background_img_folder_name + '/' + image_filename) }}"{% if not loop.last %},{% endif %}
-            {% endfor %}
+        // URLs completas para las imágenes de fondo/galería
+        const APP_BACKGROUND_IMAGE_URLS = [
+            {%- for image_filename in background_images -%}
+                "{{ url_for('static', filename=(gallery_img_folder_for_url + '/' + image_filename)) }}"{%- if not loop.last -%},{%- endif -%}
+            {%- endfor -%}
         ];
     </script>
     <!-- Scripts personalizados -->
-    <script src="{{ url_for('static', filename='js/background.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dynamicBackground.js') }}"></script> <!-- Nuevo script para fondo -->
     <script src="{{ url_for('static', filename='js/player.js') }}"></script>
-
+    
     <!-- Script global para la animación de texto y animación de la barra de navegación -->
     <script>
         function animateTextFlyOut(text, targetElement) {
