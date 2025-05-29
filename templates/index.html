@@ -4,33 +4,33 @@
 
 {% block content %}
 <div class="container mt-5">
-    <!-- The h1 was duplicated and contained nested template tags. Consolidating it. -->
     <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenid@ a mi Web</h1>
         
-        <!-- Contenedor para la imagen y el botón desplegable de GitHub -->
-        <div class="d-flex justify-content-center align-items-center mb-5">
-            <div class="me-3"> <!-- Margen a la derecha de la imagen -->
-                <img src="{{ url_for('static', filename='img/1(11).png') }}" 
-                     alt="Aupachus" 
-                     class="img-fluid rounded-circle" 
-                     style="width: 250px; height: 250px;"
-                     loading="lazy">
-            </div>
-            
-            <!-- Botón Desplegable de GitHub -->
-            <div class="dropdown">
-                <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="githubDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Github
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="githubDropdown">
-                    <li><a class="dropdown-item" href="https://aupachus.github.io/HACKENVIRONMENT/" target="_blank" rel="noopener noreferrer">Hackenvironment</a></li>
-                    <li><a class="dropdown-item" href="https://aupachus.github.io/web2/#top" target="_blank" rel="noopener noreferrer">Web2</a></li>
-                    <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
-                </ul>
-            </div>
+    <!-- Contenedor para la imagen y el botón desplegable de GitHub -->
+    <div class="d-flex justify-content-center align-items-center mb-5">
+        <div class="me-3">
+            <img src="{{ url_for('static', filename='img/1(11).png') }}" 
+                 alt="Aupachus" 
+                 class="img-fluid rounded-circle" 
+                 style="width: 250px; height: 250px;"
+                 loading="lazy">
         </div>
-        <div class="text-readable">
-        <!-- Bloque de texto en español traducible -->
+        
+        <!-- Botón Desplegable de GitHub -->
+        <div class="dropdown">
+            <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="githubDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Github
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="githubDropdown">
+                <li><a class="dropdown-item" href="https://aupachus.github.io/HACKENVIRONMENT/" target="_blank" rel="noopener noreferrer">Hackenvironment</a></li>
+                <li><a class="dropdown-item" href="https://aupachus.github.io/web2/#top" target="_blank" rel="noopener noreferrer">Web2</a></li>
+                <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="text-readable">
+        <!-- Bloque de texto traducible -->
         <div id="translatable-welcome-text">
             <p class="text-center mb-4">¡Hola! Soy Jesús Marín, pero puedes llamarme Aupachus.</p>
             <p class="text-center mb-4">Comparto recursos y conocimientos sobre programación y tecnología.</p>
@@ -39,12 +39,6 @@
             <p class="text-center mb-4">¡Gracias por estar aquí!</p>
             <p class="text-center mb-4">Si tienes alguna pregunta o sugerencia, no dudes en contactarme.</p>
         </div>
-    
-        <p class="text-center mb-4">Hello! I'm Jesús Marín, but you can call me Aupachus.</p>
-        <p class="text-center mb-4">Welcome to my website, where I share resources and knowledge about programming and technology.</p>
-        <p class="text-center mb-4">Here, you’ll find courses, tutorials, and useful links to learn and improve your skills.</p>
-        <p class="text-center mb-4">I hope you enjoy your visit and find what you’re looking for.</p>
-        <p class="text-center mb-4">Thank you for being here!</p>
     
         <!-- Botones de Traducción -->
         <div class="text-center my-3" id="translation-buttons-container">
@@ -59,11 +53,12 @@
             <button class="btn btn-sm btn-outline-primary m-1" data-lang="es">Español (Original)</button>
         </div>
     
-    <div class="text-center mt-3">
-        <a href="mailto:artemugiocursojava@gmail.com" class="btn btn-outline-success" style="font-size: 1.5rem; color: #007bff; transition: color 0.3s;">
-            Escríbeme un correo
-        </a>
-    </div>
+        <div class="text-center mt-3">
+            <a href="mailto:artemugiocursojava@gmail.com" class="btn btn-outline-success" style="font-size: 1.5rem; color: #007bff;">
+                Escríbeme un correo
+            </a>
+        </div>
+        
         <!-- Reproductor de música -->
         <div class="text-center mb-4">
             <div class="btn-group">
@@ -89,96 +84,40 @@
                 <input type="range" class="form-range w-50 mx-auto" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
             </div>
         </div>
+    </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mailBtn = document.querySelector('a[href^="mailto:"]');
-            let languageChangeInterval;
-            let currentLanguageIndex = 0;
-            const buttonTranslations = [
-                "Escríbeme un correo", // Español
-                "Write me an email",   // English
-                "Idatzi email bat",    // Euskera
-                "Écris-moi un e-mail", // Français
-                "Schreib mir eine E-Mail", // Deutsch
-                "Scrivimi una mail",   // Italiano
-                "Напиши мне письмо",  // Русский
-                "メールを書いてください", // 日本語
-                "给我写邮件"           // 中文
-            ];
-    
-            if (mailBtn) {
-                mailBtn.addEventListener('mouseover', function() {
-                    this.style.color = '#e83e8c';
-                });
-                mailBtn.addEventListener('mouseout', function() {
-                    this.style.color = '#007bff';
-                });
-    
-                let textToAnimateOut = mailBtn.textContent; // Texto inicial del botón
-    
-                languageChangeInterval = setInterval(function() {
-                    // 1. Animar las letras del texto actual para que salgan despedidas
-                    animateTextFlyOut(textToAnimateOut, mailBtn);
-    
-                    // 2. Cambiar al siguiente idioma/texto
-                    currentLanguageIndex = (currentLanguageIndex + 1) % buttonTranslations.length;
-                    const newButtonText = buttonTranslations[currentLanguageIndex];
-                    mailBtn.textContent = newButtonText;
-    
-                    // 3. Guardar el nuevo texto para la próxima animación
-                    textToAnimateOut = newButtonText;
-                }, 2500); // Disminuimos el intervalo a 2.5 segundos
-            }
-    
-            // Aplicar efecto al título "Bienvenid@ a mi Web"
-            const welcomeTitle = document.querySelector('h1.animated-title.text-center.mb-4.title-rainbow-effect');
-            let titleAnimationInterval;
-    
-            if (welcomeTitle) {
-                const originalTitleText = welcomeTitle.textContent;
-                // Asegurarse de que el texto no esté vacío antes de iniciar la animación
-                if (originalTitleText && originalTitleText.trim() !== '') {
-                    titleAnimationInterval = setInterval(function() {
-                        // Llamar a la función existente para animar las letras del título
-                        animateTextFlyOut(originalTitleText, welcomeTitle);
-                    }, 7000); // Intervalo para la animación del título (ej. 7 segundos)
-                }
-            }
-    
-            // Aplicar efecto a los botones de navegación de secciones (los que están al final)
-            const sectionNavButtons = document.querySelectorAll('div.text-center:last-of-type > a.btn');
+        // Función para animar texto (que faltaba en el original)
+        function animateTextFlyOut(text, element) {
+            if (!text || !element) return;
             
-            if (sectionNavButtons.length > 0) {
-                sectionNavButtons.forEach((button, index) => {
-                    const originalButtonText = button.textContent.trim();
-                    if (originalButtonText !== '') {
-                        // Intervalo base para la animación de cada botón de sección
-                        const baseIntervalTime = 9000; // Ej: 9 segundos
-                        // Variación aleatoria para que no todos animen al mismo ritmo exacto
-                        const randomVariation = Math.random() * 4000; // 0 a 4 segundos de variación
-                        const individualInterval = baseIntervalTime + randomVariation;
-    
-                        // Retrasar el inicio del ciclo de animación de cada botón para escalonarlos
-                        setTimeout(() => {
-                            // Primera animación (opcional, para que no esperen el primer intervalo completo)
-                            // animateTextFlyOut(originalButtonText, button); 
-                            
-                            // Configurar las animaciones periódicas
-                            setInterval(function() {
-                                // Usamos el texto original capturado. Si el texto pudiera cambiar dinámicamente,
-                                // se debería obtener button.textContent aquí dentro.
-                                animateTextFlyOut(originalButtonText, button);
-                            }, individualInterval);
-                        }, index * 800); // Escalonar el inicio de cada ciclo por 800ms * índice del botón
-                    }
-                });
-            }
-    
-            // Lógica de Traducción
-            const translatableTextContainer = document.getElementById('translatable-welcome-text');
-            const translationButtons = document.querySelectorAll('#translation-buttons-container button[data-lang]');
-    
+            // Limpiar el elemento
+            element.innerHTML = '';
+            
+            // Crear un span para cada letra
+            text.split('').forEach((char, index) => {
+                const span = document.createElement('span');
+                span.textContent = char === ' ' ? '&nbsp;' : char;
+                span.style.display = 'inline-block';
+                span.style.transition = `transform 0.5s ease, opacity 0.5s ease`;
+                span.style.transitionDelay = `${index * 0.05}s`;
+                element.appendChild(span);
+                
+                // Iniciar animación después de un pequeño retraso
+                setTimeout(() => {
+                    span.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+                    span.style.opacity = '0';
+                }, 50);
+            });
+            
+            // Restaurar texto después de la animación
+            setTimeout(() => {
+                element.textContent = text;
+            }, text.length * 100 + 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuración de traducciones
             const translations = {
                 'es': `
                     <p class="text-center mb-4">¡Hola! Soy Jesús Marín, pero puedes llamarme Aupachus.</p>
@@ -191,8 +130,8 @@
                 'en': `
                     <p class="text-center mb-4">Hello! I'm Jesús Marín, but you can call me Aupachus.</p>
                     <p class="text-center mb-4">I share resources and knowledge about programming and technology.</p>
-                    <p class="text-center mb-4">Here, you’ll find courses, tutorials, and useful links to learn and improve your skills.</p>
-                    <p class="text-center mb-4">I hope you enjoy your visit and find what you’re looking for.</p>
+                    <p class="text-center mb-4">Here, you'll find courses, tutorials, and useful links to learn and improve your skills.</p>
+                    <p class="text-center mb-4">I hope you enjoy your visit and find what you're looking for.</p>
                     <p class="text-center mb-4">Thank you for being here!</p>
                     <p class="text-center mb-4">If you have any questions or suggestions, feel free to contact me.</p>
                 `,
@@ -253,66 +192,73 @@
                     <p class="text-center mb-4">如果你有任何问题或建议，请随时与我联系。</p>
                 `
             };
-    
+
+            // Event listeners para los botones de traducción
+            const translationButtons = document.querySelectorAll('#translation-buttons-container button[data-lang]');
+            const translatableTextContainer = document.getElementById('translatable-welcome-text');
+            
             translationButtons.forEach(button => {
                 button.addEventListener('click', function() {
-                    const lang = this.dataset.lang;
+                    const lang = this.getAttribute('data-lang');
                     if (translatableTextContainer && translations[lang]) {
-                        translatableTextContainer.innerHTML = translations[lang];
+                        // Animación de salida antes de cambiar el texto
+                        animateTextFlyOut(translatableTextContainer.textContent, translatableTextContainer);
+                        
+                        // Cambiar el contenido después de un breve retraso
+                        setTimeout(() => {
+                            translatableTextContainer.innerHTML = translations[lang];
+                        }, 500);
                     }
                 });
             });
-    
-            // Animación de caída para el bloque de texto de bienvenida en español
-            const welcomeTextBlock = document.getElementById('translatable-welcome-text');
-            let fallingAnimationInterval;
-    
-            if (welcomeTextBlock) {
-                const fallAnimationDuration = 3500; // Duración de la animación de caída en ms (e.g., 3.5 segundos)
-                const fallIntervalTime = 12000;    // Intervalo entre caídas en ms (e.g., 12 segundos)
-    
-                function animateFall(element) {
-                    // Asegurarse de que el elemento esté en su posición inicial antes de caer
-                    element.style.transform = 'translateY(0px)';
-                    element.style.opacity = '1';
-    
-                    element.animate([
-                        { transform: 'translateY(0px)', opacity: 1 },
-                        { transform: `translateY(${window.innerHeight * 0.8}px)`, opacity: 0 } // Cae el 80% de la altura de la ventana
-                    ], {
-                        duration: fallAnimationDuration,
-                        easing: 'ease-in', // Efecto de aceleración hacia abajo
-                        fill: 'forwards' // Mantiene el estado final (invisible y abajo)
-                    }).onfinish = () => {
-                        // Después de que la animación termina, resetear para la próxima vez (si es necesario)
-                        // Para un efecto de "cae y se va", y luego reaparece para caer de nuevo:
-                        setTimeout(() => {
-                            element.style.transform = 'translateY(0px)';
-                            element.style.opacity = '1';
-                        }, 50); // Pequeño delay antes de reaparecer para evitar flicker
-                    };
-                }
-    
-                fallingAnimationInterval = setInterval(() => {
-                    animateFall(welcomeTextBlock);
-                }, fallIntervalTime);
-            });
+
+            // Animación para el botón de correo
+            const mailBtn = document.querySelector('a[href^="mailto:"]');
+            const buttonTranslations = [
+                "Escríbeme un correo", // Español
+                "Write me an email",   // English
+                "Idatzi email bat",    // Euskera
+                "Écris-moi un e-mail", // Français
+                "Schreib mir eine E-Mail", // Deutsch
+                "Scrivimi una mail",   // Italiano
+                "Напиши мне письмо",  // Русский
+                "メールを書いてください", // 日本語
+                "给我写邮件"           // 中文
+            ];
+
+            if (mailBtn) {
+                let currentLanguageIndex = 0;
+                
+                mailBtn.addEventListener('mouseover', function() {
+                    this.style.color = '#e83e8c';
+                });
+                
+                mailBtn.addEventListener('mouseout', function() {
+                    this.style.color = '#007bff';
+                });
+
+                // Cambiar idioma cada 3 segundos
+                setInterval(() => {
+                    currentLanguageIndex = (currentLanguageIndex + 1) % buttonTranslations.length;
+                    mailBtn.textContent = buttonTranslations[currentLanguageIndex];
+                }, 3000);
+            }
         });
     </script>
-    <div class="text-center mt-4"> <!-- Added mt-4 for spacing -->
-            <a href="{{ url_for('social') }}" class="btn btn-info">Explorar IA y Redes Sociales</a>
-            <a href="{{ url_for('ver_pdfs') }}" class="btn btn-primary">Ver PDFs disponibles</a>
-            <a href="{{ url_for('galeria') }}" class="btn btn-success">Galería de fotos</a>
-            <a href="{{ url_for('social') }}" class="btn btn-warning">Redes Sociales</a>    
-            <a href="{{ url_for('enlaces') }}" class="btn btn-danger">Enlaces</a>
-            <a href="{{ url_for('cursos') }}" class="btn btn-secondary">Cursos</a>
-            <a href="{{ url_for('opinion') }}" class="btn btn-dark">¿Y tú qué opinas?</a>
-            <a href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" class="btn btn-outline-info" target="_blank" rel="noopener noreferrer">BLOGGER</a>
-        </div>
-    
-        
-         <p class="rainbow-text lorem-text-large">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br>
-        </p>
+
+    <div class="text-center mt-4">
+        <a href="{{ url_for('social') }}" class="btn btn-info">Explorar IA y Redes Sociales</a>
+        <a href="{{ url_for('ver_pdfs') }}" class="btn btn-primary">Ver PDFs disponibles</a>
+        <a href="{{ url_for('galeria') }}" class="btn btn-success">Galería de fotos</a>
+        <a href="{{ url_for('social') }}" class="btn btn-warning">Redes Sociales</a>    
+        <a href="{{ url_for('enlaces') }}" class="btn btn-danger">Enlaces</a>
+        <a href="{{ url_for('cursos') }}" class="btn btn-secondary">Cursos</a>
+        <a href="{{ url_for('opinion') }}" class="btn btn-dark">¿Y tú qué opinas?</a>
+        <a href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" class="btn btn-outline-info" target="_blank" rel="noopener noreferrer">BLOGGER</a>
     </div>
+    
+    <p class="rainbow-text lorem-text-large">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.<br>
+    </p>
+</div>
 {% endblock %}
