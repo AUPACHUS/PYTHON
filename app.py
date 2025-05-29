@@ -234,11 +234,6 @@ def galeria():
     img_files = [f for f in os.listdir(img_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))]
     return render_template("galeria.html", images=img_files)
 
-# Ruta para la página de IA
-@app.route("/inteligencia_artificial") 
-def inteligencia_artificial():
-    return render_template("inteligencia_artificial.html")
-
 # Ruta para registrar usuarios
 @app.route("/register_user", methods=["POST"])
 def register_user():
@@ -250,18 +245,18 @@ def register_user():
     if not all([username, email, password]):
         flash("Todos los campos (nombre de usuario, email, contraseña) son requeridos.")
         # Assuming the registration form is on inteligencia_artificial.html or a dedicated registration page
-        return redirect(url_for("inteligencia_artificial")) # Or your registration page
+        return redirect(url_for("social")) # Redirigir a social ya que IA está integrada allí
 
     # Validar si el usuario ya existe
     if any(user["email"] == email for user in users):
         flash("El usuario ya está registrado.")
-        return redirect(url_for("inteligencia_artificial"))
+        return redirect(url_for("social")) # Redirigir a social
     hashed_password = generate_password_hash(password) # Hash the password
     # Guardar nuevo usuario
     users.append({"username": username, "email": email, "password": hashed_password}) # Store the hashed password
     save_data(USERS_FILE, users)
     flash("Usuario registrado exitosamente.")
-    return redirect(url_for("inteligencia_artificial"))
+    return redirect(url_for("social")) # Redirigir a social
 
 # Ruta para la página de opiniones
 @app.route("/opinion")

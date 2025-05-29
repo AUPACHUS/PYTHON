@@ -26,11 +26,7 @@
                         <a class="nav-link {% if current_endpoint == 'galeria' %}active{% endif %}"
                            href="{{ url_for('galeria') }}"
                            {% if current_endpoint == 'galeria' %}aria-current="page"{% endif %}>Galería de fotos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if current_endpoint == 'inteligencia_artificial' %}active{% endif %}"
-                           href="{{ url_for('inteligencia_artificial') }}"
-                           {% if current_endpoint == 'inteligencia_artificial' %}aria-current="page"{% endif %}>Lanzadera IA</a>
+                
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if current_endpoint == 'ver_pdfs' %}active{% endif %}"
