@@ -134,6 +134,10 @@ def get_news():
         news_data = news_data_raw
     else:
         app.logger.warning(
+       # c:\Users\JESUS\Desktop\PYTHON\app.py, line 227
+       @app.route("/inteligencia_artificial")
+       def inteligencia_artificial():
+           return render_template("inteligencia_artificial.html")
             f"Data loaded from {NEWS_FILE} is not a dictionary (type: {type(news_data_raw)}). "
             f"Assuming corrupted or initial state. Content snippet: '{str(news_data_raw)[:100]}...'"
         )
