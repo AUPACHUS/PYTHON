@@ -29,9 +29,24 @@ NEWS_FILE = "news.json"
 # Cargar datos
 def load_data(file):
     try:
-        with open(file, "r") as f:
-            return json.load(f)
+        with open(file, "r", encoding="utf-8") as f:
+            content = f.read()
+            if not content.strip(): # Check if content is empty or just whitespace
+                app.logger.warning(f"File {file} is empty or contains only whitespace. Returning empty list.")
+                return [] # Consistent default for problematic files
+            return json.loads(content)
     except FileNotFoundError:
+        app.logger.info(f"File {file} not found. Returning empty list.")
+        return []
+    except json.JSONDecodeError as e:
+        # Log a snippet of the content for easier debugging
+        content_snippet = ""
+        try:
+            with open(file, "r", encoding="utf-8") as f_err: # Re-open to get content if `content` var is not in scope
+                content_snippet = f_err.read(200) # Read first 200 chars
+        except Exception:
+            pass # Ignore if re-reading fails
+        app.logger.error(f"Error decoding JSON from {file}: {e}. Content snippet: '{content_snippet}...'. Returning empty list.")
         return []
 
 def save_data(file, data):
@@ -85,14 +100,26 @@ def fetch_reuters_news():
 
 # Función para cargar noticias (y actualizarlas si es necesario)
 def get_news():
-    news_data = load_data(NEWS_FILE)
-    last_updated = news_data.get("last_updated", 0)
-    headlines = news_data.get("headlines", [])
+    news_data_raw = load_data(NEWS_FILE)
+    
+    # Ensure news_data is a dictionary
+    if isinstance(news_data_raw, dict):
+        news_data = news_data_raw
+    else:
+        app.logger.warning(
+            f"Data loaded from {NEWS_FILE} is not a dictionary (type: {type(news_data_raw)}). "
+            f"Assuming corrupted or initial state. Content snippet: '{str(news_data_raw)[:100]}...'"
+        )
+        news_data = {} # Default to an empty dict to prevent further errors with .get()
+
+    last_updated = news_data.get("last_updated", 0) # Safely get, defaults to 0 if key missing or news_data is {}
+    headlines = news_data.get("headlines", [])     # Safely get, defaults to [] if key missing or news_data is {}
 
     # Actualizar noticias si han pasado más de 5 días o si no hay titulares
-    if time.time() - last_updated > 5 * 24 * 60 * 60 or not headlines:
-        headlines = fetch_reuters_news()
-
+    # Also update if news_data was empty/corrupt (which would make last_updated=0 and headlines=[])
+    if time.time() - last_updated > 5 * 24 * 60 * 60 or not headlines or not news_data:
+        app.logger.info(f"Updating news. Reason: timeout, no headlines, or problematic file.")
+        headlines = fetch_reuters_news() # fetch_reuters_news fetches, saves, and returns the new headlines list
     return headlines
 
 # Context processor para inyectar datos compartidos en las plantillas

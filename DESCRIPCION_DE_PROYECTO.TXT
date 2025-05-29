@@ -1,0 +1,101 @@
+--- /dev/null
++++ b/C:\Users\JESUS\Desktop\PYTHON\descripcion_proyecto.txt
+@@ -0,0 +1,84 @@
++ESTRUCTURA DEL PROYECTO Y DEFINICIONES
++
++PYTHON/
++├── app.py
++│   └── Definición: Archivo principal de la aplicación Python (probablemente usando un framework como Flask).
++│       Contiene la lógica del servidor, incluyendo el manejo de rutas (URLs),
++│       el procesamiento de solicitudes de los usuarios, la interacción con los
++│       archivos de datos (JSON en este caso), y la renderización de plantillas HTML.
++│
++├── static/
++│   │   Definición: Carpeta que contiene archivos estáticos. Estos archivos se sirven
++│   │   directamente al navegador del cliente sin ningún procesamiento por parte
++│   │   del servidor Python. Incluyen CSS para estilos y JavaScript para interactividad.
++│   │
++│   ├── css/
++│   │   │   Definición: Subcarpeta dentro de 'static/' que almacena los archivos
++│   │   │   CSS (Cascading Style Sheets). Los archivos CSS definen la presentación
++│   │   │   visual y el diseño de las páginas web (colores, fuentes, márgenes, etc.).
++│   │   │
++│   │   ├── style.css
++│   │   │   └── Definición: Un archivo CSS que contiene las reglas de estilo para
++│   │   │       la apariencia del sitio web. Podría ser el principal o uno de varios.
++│   │   │
++│   │   └── styles.css
++│   │       └── Definición: Otro archivo CSS. Podría contener estilos adicionales,
++│   │           ser una alternativa a 'style.css', o quizás una versión anterior/específica.
++│   │           Su coexistencia con 'style.css' sugiere una posible redundancia o una
++│   │           organización específica de estilos.
++│   │
++│   └── js/
++│       │   Definición: Subcarpeta dentro de 'static/' para archivos JavaScript.
++│       │   JavaScript se utiliza para añadir interactividad y funcionalidades dinámicas
++│       │   a las páginas web en el navegador del usuario (lado del cliente).
++│       │
++│       └── script.js
+│           └── Definición: Archivo JavaScript principal que contiene el código para
++│               la interactividad del sitio, como validación de formularios,
++│               animaciones, manipulación del DOM, o llamadas AJAX.
++│
++├── templates/
++│   │   Definición: Carpeta que contiene las plantillas HTML. El framework de Python
++│   │   (ej. Flask) utiliza estas plantillas para generar dinámicamente el contenido
++│   │   HTML que se envía al navegador del usuario.
++│   │
++│   ├── base.html
++│   │   └── Definición: Plantilla HTML base o maestra. Usualmente define la estructura
++│   │       común del sitio (como el doctype, head, menú de navegación, pie de página)
++│   │       que otras plantillas específicas (index.html, cursos.html, etc.) heredan
++│   │       o incluyen para mantener la consistencia y evitar la repetición de código.
++│   │
++│   ├── cursos.html
++│   │   └── Definición: Plantilla HTML para la página que muestra información sobre cursos.
++│   │
++│   ├── enlaces.html
++│   │   └── Definición: Plantilla HTML para la página que lista enlaces de interés o recursos.
++│   │
++│   ├── galeria.html
++│   │   └── Definición: Plantilla HTML para la página de la galería de imágenes.
++│   │
++│   ├── index.html
++│   │   └── Definición: Plantilla HTML para la página principal o de inicio del sitio web.
++│   │
++│   ├── Inteligencia_artificial.html
++│   │   └── Definición: Plantilla HTML para la página con contenido específico sobre Inteligencia Artificial.
++│   │
++│   ├── opinion.html
++│   │   └── Definición: Plantilla HTML para la página de opiniones, ya sea para mostrar
++│   │       opiniones existentes o para permitir a los usuarios enviar las suyas.
++│   │
++│   ├── pdfs.html
++│   │   └── Definición: Plantilla HTML para la página que lista o proporciona enlaces a documentos PDF.
++│   │
++│   └── social.html
++│       └── Definición: Plantilla HTML para una página con contenido social, como enlaces
++│           a redes sociales, perfiles de usuario, o interacciones comunitarias.
++│
++├── .GITIGNORE
++│   └── Definición: Archivo de configuración para Git (sistema de control de versiones).
++│       Especifica patrones de archivos y carpetas que Git debe ignorar y no incluir
++│       en el seguimiento de cambios ni en los commits (ej. archivos de entorno virtual,
++│       archivos compilados, logs, configuraciones locales sensibles).
++│
++├── news.json
++│   └── Definición: Archivo de datos en formato JSON (JavaScript Object Notation).
++│       Probablemente utilizado para almacenar una lista de noticias o artículos
++│       (ej. títulos, contenido, fechas) que la aplicación puede leer y mostrar.
++│
++├── opinions.json
++│   └── Definición: Archivo de datos en formato JSON. Similar a news.json, pero
++│       destinado a almacenar opiniones, comentarios o testimonios de usuarios.
++│
++└── users.json
++    └── Definición: Archivo de datos en formato JSON. Probablemente utilizado para
++        almacenar información de usuarios (ej. nombres de usuario, perfiles).
++        Es crucial manejar con cuidado los datos sensibles; para contraseñas,
++        siempre deben almacenarse hasheadas y no en texto plano. Para aplicaciones
++        robustas, se prefiere una base de datos real sobre archivos JSON para usuarios.
+
