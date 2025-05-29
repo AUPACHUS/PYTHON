@@ -1,239 +1,233 @@
-/* Estilo global para el fondo y el texto */
+/* Estilos base para el cuerpo de la página */
 body {
-    color: #ffffff; /* Texto blanco */
-    font-family: Arial, sans-serif; /* Fuente legible */
-    margin: 0;
-    padding: 0;
-    font-size: 1.17em; /* Tamaño de fuente base (original +30%, luego -10%) */
-    /* El fondo visual principal es manejado por #background-container.
-       Se podría poner un color de fondo aquí como un último recurso
-       si #background-container fallara completamente. */
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 1.17em;
 }
 
-/* Asegurar que los enlaces sean legibles */
+/* Estilos para enlaces */
 a {
-    color: #ffcc00; /* Amarillo para enlaces */
-    text-decoration: none;
+  color: #ffcc00;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-/* Ajustar los contenedores para que sean más legibles */
+/* Contenedores principales */
 .container {
-    padding: 20px;
-    background-color: rgba(44, 0, 62, 0.9); /* Fondo semitransparente */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  background-color: rgba(44, 0, 62, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Títulos animados */
 .animated-title {
-    color: #ffcc00; /* Amarillo para destacar los títulos */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  color: #ffcc00;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-#background-container {
-    /* Estilos base para el contenedor del fondo.
-       background-image será establecido por background.js si hay imágenes. */
-    background-color: #2c003e; /* Color de fondo morado oscuro de fallback */
-    /* Opcionalmente, una imagen de fondo estática de fallback:
-    background-image: url('../img/default_background.jpg'); */
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-    background-size: cover;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
+/* Fondo dinámico de la página */
+#dynamic-page-background {
+  background-color: #2c003e;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transition: opacity 0.5s ease-in-out;
 }
 
-/* Nuevos estilos para autenticación */
+/* Estilos para autenticación */
 .auth-container {
-    max-width: 400px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .form-group {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .form-group input,
 .form-group select {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
+/* Botones */
 .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn-primary {
-    background: #4CAF50;
-    color: white;
+  background: #4CAF50;
+  color: white;
 }
 
 .btn-secondary {
-    background: #6c757d;
-    color: white;
+  background: #6c757d;
+  color: white;
 }
 
 .btn:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
-/* Estilos para categorías */
+/* Categorías */
 .category-filter {
-    margin: 1rem 0;
-    padding: 1rem;
-    background: white;
-    border-radius: 5px;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: white;
+  border-radius: 5px;
 }
 
 .category-badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    margin: 0.25rem;
-    background: #e9ecef;
-    border-radius: 20px;
-    text-decoration: none;
-    color: #495057;
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  margin: 0.25rem;
+  background: #e9ecef;
+  border-radius: 20px;
+  text-decoration: none;
+  color: #495057;
 }
 
 .category-badge.active {
-    background: #4CAF50;
-    color: white;
+  background: #4CAF50;
+  color: white;
 }
 
 .category-badge:hover {
-    background: #dee2e6;
+  background: #dee2e6;
 }
 
-/* Estilos para búsqueda */
+/* Búsqueda */
 .search-box {
-    margin: 1rem 0;
-    display: flex;
+  margin: 1rem 0;
+  display: flex;
 }
 
 .search-box input {
-    flex-grow: 1;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
+  flex-grow: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
 }
 
 .search-box button {
-    padding: 0.5rem 1rem;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 0 4px 4px 0;
+  padding: 0.5rem 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0 4px 4px 0;
 }
 
-/* Estilo para mejorar la legibilidad del texto */
+/* Mejorar legibilidad del texto */
 .text-readable {
-    color: #ffffff; /* Blanco para un fondo azul */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Sombra para mejorar la legibilidad */
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-/* Estilo para los enlaces de los PDFs */
+/* Enlaces PDF */
 .pdf-link {
-    color: #000000; /* Negro */
-    text-decoration: none;
+  color: #000000;
+  text-decoration: none;
 }
 
 .pdf-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-/* Estilo para los enlaces en la página de enlaces */
+/* Página de enlaces */
 .enlace-link {
-    color: #000000; /* Negro */
-    text-decoration: none;
-    font-weight: bold;
-    display: block;
-    text-align: center;
-    margin-bottom: 5px;
+  color: #000000;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+  margin-bottom: 5px;
 }
 
 .enlace-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-/* Estilo para la lista de enlaces */
 .enlace-item {
-    text-align: center;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    background-color: #f9f9f9;
+  text-align: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
 }
 
 .enlace-description {
-    color: #555; /* Gris oscuro */
-    font-size: 0.9rem;
+  color: #555;
+  font-size: 0.9rem;
 }
 
-/* Estilo para el selector de pistas del reproductor de música */
+/* Reproductor de música */
 .track-selector-custom {
-    max-width: 300px;
+  max-width: 300px;
 }
 
-/* Animación de texto arcoíris para el título principal */
+/* Animaciones */
 @keyframes titleRainbowAnimation {
-    0%   {color: red;}
-    14%  {color: orange;}
-    28%  {color: yellow;}
-    42%  {color: green;}
-    57%  {color: blue;}
-    71%  {color: indigo;}
-    85%  {color: violet;}
-    100% {color: red;}
+  0% {color: red;}
+  14% {color: orange;}
+  28% {color: yellow;}
+  42% {color: green;}
+  57% {color: blue;}
+  71% {color: indigo;}
+  85% {color: violet;}
+  100% {color: red;}
 }
 
 .title-rainbow-effect {
-    animation: titleRainbowAnimation 6s infinite linear;
-    /* La propiedad 'color' de .animated-title o inline será anulada por la animación */
+  animation: titleRainbowAnimation 6s infinite linear;
 }
 
+/* Texto grande */
 .lorem-text-large {
-    font-size: 1.404em; /* Aproximadamente 20% más grande que el font-size del body (1.17em * 1.2) */
+  font-size: 1.404em;
 }
 
-/* Estilos mejorados para list-group-items en tema oscuro */
+/* List group items en tema oscuro */
 .list-group-item {
-    background-color: rgba(255, 255, 255, 0.08) !important; /* Fondo ligeramente visible, !important para anular BS si es necesario */
-    border-color: rgba(255, 255, 255, 0.25) !important; /* Borde más claro y sutil */
-    color: #ffffff !important; /* Asegurar texto blanco */
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
 }
 
-/* Estilo para enlaces dentro de list-group-items */
 .list-group-item a {
-    color: #ffcc00; /* Amarillo para enlaces, igual que los enlaces generales */
+  color: #ffcc00;
 }
 
 .list-group-item a:hover {
-    color: #ffd633; /* Un amarillo un poco más claro al pasar el mouse */
+  color: #ffd633;
 }
