@@ -135,7 +135,7 @@ def get_news():
     else:
         app.logger.warning(
        # c:\Users\JESUS\Desktop\PYTHON\app.py, line 227
-       @app.route("/inteligencia_artificial")
+       app.route("/inteligencia_artificial")
        def inteligencia_artificial():
            return render_template("inteligencia_artificial.html")
             f"Data loaded from {NEWS_FILE} is not a dictionary (type: {type(news_data_raw)}). "
