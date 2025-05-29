@@ -235,7 +235,7 @@ def galeria():
     return render_template("galeria.html", images=img_files)
 
 # Ruta para la página de IA
-@app.route("/inteligencia_artificial") # Moved to the correct top-level scope
+@app.route("/inteligencia_artificial") 
 def inteligencia_artificial():
     return render_template("inteligencia_artificial.html")
 
