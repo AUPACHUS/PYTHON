@@ -10,9 +10,17 @@ from werkzeug.security import generate_password_hash, check_password_hash # Impo
 
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Necesario para mostrar mensajes flash
+APP_ROOT = os.path.dirname(os.path.abspath(__file__)) # Root directory of the app
 
 # Configuración
-app.config['PDF_FOLDER'] = 'static/pdfs'
+# Use absolute path for PDF_FOLDER
+PDF_DIR_NAME = 'pdfs'
+STATIC_DIR_NAME = 'static'
+
+# Absolute path to the static folder (Flask usually sets app.static_folder to an absolute path)
+ABS_STATIC_FOLDER = os.path.join(APP_ROOT, STATIC_DIR_NAME) if not os.path.isabs(app.static_folder) else app.static_folder
+
+app.config['PDF_FOLDER'] = os.path.join(ABS_STATIC_FOLDER, PDF_DIR_NAME)
 os.makedirs(app.config['PDF_FOLDER'], exist_ok=True)
 
 # Carpetas para audio e imágenes de fondo
@@ -185,8 +193,13 @@ def home():
 # Ruta para ver PDFs
 @app.route("/ver_pdfs")
 def ver_pdfs():
-    pdf_folder = os.path.join(app.root_path, 'static', 'pdfs')
-    pdfs = [f for f in os.listdir(pdf_folder) if f.endswith('.pdf')]
+    pdf_folder_abs = app.config['PDF_FOLDER']
+    if not os.path.isdir(pdf_folder_abs): # Check if directory exists
+        app.logger.error(f"PDF folder not found at: {pdf_folder_abs}")
+        flash("Error: La carpeta de PDFs no se encuentra o no es accesible.")
+        pdfs = []
+    else:
+        pdfs = [f for f in os.listdir(pdf_folder_abs) if f.endswith('.pdf')]
     return render_template("pdfs.html", pdfs=pdfs)
 
 # Ruta para subir PDFs
@@ -230,15 +243,19 @@ def inteligencia_artificial():
 @app.route("/register_user", methods=["POST"])
 def register_user():
     users = load_data(USERS_FILE)
-    username = request.form["username"]
-    email = request.form["email"]
-    password = request.form["password"] # Plain text password from form
+    username = request.form.get("username")
+    email = request.form.get("email")
+    password = request.form.get("password")
+
+    if not all([username, email, password]):
+        flash("Todos los campos (nombre de usuario, email, contraseña) son requeridos.")
+        # Assuming the registration form is on inteligencia_artificial.html or a dedicated registration page
+        return redirect(url_for("inteligencia_artificial")) # Or your registration page
 
     # Validar si el usuario ya existe
     if any(user["email"] == email for user in users):
         flash("El usuario ya está registrado.")
         return redirect(url_for("inteligencia_artificial"))
-
     hashed_password = generate_password_hash(password) # Hash the password
     # Guardar nuevo usuario
     users.append({"username": username, "email": email, "password": hashed_password}) # Store the hashed password
@@ -257,8 +274,12 @@ def opinion():
 @app.route("/submit_opinion", methods=["POST"])
 def submit_opinion():
     opinions = load_data(OPINIONS_FILE)
-    username = request.form.get("username", "Anónimo")
-    text = request.form["opinion"]
+    username = request.form.get("username", "Anónimo") # Keeps default if username is empty
+    text = request.form.get("opinion")
+
+    if not text or not text.strip():
+        flash("El texto de la opinión no puede estar vacío.")
+        return redirect(url_for("opinion"))
     date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Guardar opinión
