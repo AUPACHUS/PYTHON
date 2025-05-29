@@ -5,6 +5,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 import time
+from urllib.parse import urljoin # For constructing absolute URLs
+from werkzeug.security import generate_password_hash, check_password_hash # Import for password hashing
 
 app = Flask(__name__)
 app.secret_key = "secret_key"  # Necesario para mostrar mensajes flash
@@ -39,19 +41,47 @@ def save_data(file, data):
 # Función para obtener noticias de Reuters
 def fetch_reuters_news():
     url = "https://www.reuters.com/world/"
-    response = requests.get(url)
+    base_reuters_url = "https://www.reuters.com"
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+    except requests.exceptions.RequestException as e:
+        app.logger.error(f"Error fetching Reuters news: {e}")
+        return []
+
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Extraer titulares de noticias
-    headlines = []
-    for item in soup.select(".story-title, .MediaStoryCard__title__2PHMe"):
-        if len(headlines) >= 6:  # Limitar a 6 noticias
-            break
-        headlines.append(item.get_text(strip=True))
+    headlines_data = []
+    processed_urls = set() # To avoid duplicates
 
-    # Guardar las noticias en un archivo JSON
-    save_data(NEWS_FILE, {"last_updated": time.time(), "headlines": headlines})
-    return headlines
+    # Selectors might need adjustment if Reuters changes their HTML structure.
+    # This attempts to find elements containing title text and their associated links.
+    # Common pattern: title text is within an <a> tag, or an <a> tag is a close parent.
+    title_text_elements = soup.select(".story-title, .MediaStoryCard__title__2PHMe, [data-testid='Heading']")
+
+    for text_el in title_text_elements:
+        if len(headlines_data) >= 6:  # Limitar a 6 noticias
+            break
+
+        title = text_el.get_text(strip=True)
+        
+        # Find the closest ancestor <a> tag with an href
+        link_tag = text_el.find_parent('a', href=True)
+        
+        # If the text_el itself is an <a> tag
+        if not link_tag and text_el.name == 'a' and text_el.has_attr('href'):
+            link_tag = text_el
+            
+        if title and link_tag and len(title) > 5: # Basic filter for meaningful titles
+            href = link_tag.get('href')
+            if href:
+                absolute_url = urljoin(base_reuters_url, href)
+                if absolute_url not in processed_urls: # Avoid duplicates
+                    headlines_data.append({"title": title, "url": absolute_url})
+                    processed_urls.add(absolute_url)
+
+    save_data(NEWS_FILE, {"last_updated": time.time(), "headlines": headlines_data})
+    return headlines_data
 
 # Función para cargar noticias (y actualizarlas si es necesario)
 def get_news():
@@ -59,7 +89,7 @@ def get_news():
     last_updated = news_data.get("last_updated", 0)
     headlines = news_data.get("headlines", [])
 
-    # Verificar si han pasado más de 5 días (5 * 24 * 60 * 60 segundos)
+    # Actualizar noticias si han pasado más de 5 días o si no hay titulares
     if time.time() - last_updated > 5 * 24 * 60 * 60 or not headlines:
         headlines = fetch_reuters_news()
 
@@ -89,7 +119,9 @@ def inject_shared_data():
     return dict(
         music_tracks=music_tracks_data,
         background_images=background_images_data,
-        current_endpoint=request.endpoint # Para la navegación activa
+        current_endpoint=request.endpoint, # Para la navegación activa
+        audio_folder_name=AUDIO_FOLDER_NAME,
+        background_img_folder_name=BACKGROUND_IMG_FOLDER_NAME
     )
 # Ruta principal
 @app.route("/")
@@ -146,15 +178,16 @@ def register_user():
     users = load_data(USERS_FILE)
     username = request.form["username"]
     email = request.form["email"]
-    password = request.form["password"]
+    password = request.form["password"] # Plain text password from form
 
     # Validar si el usuario ya existe
     if any(user["email"] == email for user in users):
         flash("El usuario ya está registrado.")
         return redirect(url_for("inteligencia_artificial"))
 
+    hashed_password = generate_password_hash(password) # Hash the password
     # Guardar nuevo usuario
-    users.append({"username": username, "email": email, "password": password})
+    users.append({"username": username, "email": email, "password": hashed_password}) # Store the hashed password
     save_data(USERS_FILE, users)
     flash("Usuario registrado exitosamente.")
     return redirect(url_for("inteligencia_artificial"))

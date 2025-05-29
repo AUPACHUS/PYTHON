@@ -194,3 +194,8 @@ a:hover {
     color: #555; /* Gris oscuro */
     font-size: 0.9rem;
 }
+
+/* Estilo para el selector de pistas del reproductor de música */
+.track-selector-custom {
+    max-width: 300px;
+}

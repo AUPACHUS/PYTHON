@@ -12,7 +12,11 @@
         <h2 class="text-center">Noticias del día</h2>
         <ul class="list-group">
             {% for headline in headlines %}
-                <li class="list-group-item">{{ headline }}</li>
+                <li class="list-group-item">
+                    <a href="{{ headline.url }}" target="_blank" rel="noopener noreferrer">
+                        {{ headline.title }}
+                    </a>
+                </li>
             {% endfor %}
         </ul>
     </div>
