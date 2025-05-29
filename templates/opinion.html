@@ -4,12 +4,12 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="animated-title text-center mb-4">¿Y tú qué opinas?</h1>
-    <p class="text-center">Comparte tu opinión sobre las noticias más relevantes del día.</p>
+    <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">¿Y tú qué opinas?</h1>
+    <p class="text-center mb-4 text-readable">Comparte tu opinión sobre las noticias más relevantes del día.</p>
 
     <!-- Noticias relevantes -->
     <div class="mb-4">
-        <h2 class="text-center">Noticias del día</h2>
+        <h2 class="text-center text-readable mb-3 animated-title title-rainbow-effect" style="font-size: 3rem;">Noticias del día</h2>
         <ul class="list-group">
             {% for headline in headlines %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -35,7 +35,7 @@
 
     <!-- Formulario para enviar opiniones -->
     <div class="mb-4">
-        <h2 class="text-center">Escribe tu opinión</h2>
+        <h2 class="text-center text-readable mb-3 animated-title title-rainbow-effect" style="font-size: 3rem;">Escribe tu opinión</h2>
         <form action="{{ url_for('submit_opinion') }}" method="POST">
             <div class="mb-3">
                 <label for="username" class="form-label">Nombre (opcional):</label>
@@ -51,7 +51,7 @@
 
     <!-- Tablón de opiniones -->
     <div>
-        <h2 class="text-center">Opiniones recientes</h2>
+        <h2 class="text-center text-readable mb-3 animated-title title-rainbow-effect" style="font-size: 3rem;">Opiniones recientes</h2>
         {% if opinions %}
             <ul class="list-group">
             {% for opinion in opinions %}

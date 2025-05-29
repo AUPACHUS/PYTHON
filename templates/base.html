@@ -94,28 +94,146 @@
     <script src="{{ url_for('static', filename='js/background.js') }}"></script>
     <script src="{{ url_for('static', filename='js/player.js') }}"></script>
 </body>
-</html>    <!-- Reproductor de música -->
-    <div class="text-center mb-4">
-        <div class="btn-group">
-            <button id="prevButton" class="btn btn-secondary">⏮ Anterior</button>
-            <button id="playButton" class="btn btn-success">▶ Reproducir</button>
-            <button id="nextButton" class="btn btn-secondary">⏭ Siguiente</button>
-            <button id="stopButton" class="btn btn-danger">■ Detener</button>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- ... tus etiquetas head ... -->
+    <title>{% block title %}Mi Sitio Web{% endblock %}</title>
+    <!-- ... CSS links ... -->
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <!-- O la estructura de tu navbar -->
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">Mi Sitio</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('galeria') }}">Galería</a>
+                    </li>
+                    <!-- Otros enlaces de navegación -->
+                </ul>
+            </div>
         </div>
-        <div class="mt-3">
-            <label for="trackSelector">Seleccionar pista:</label>
-            <select id="trackSelector" class="form-select w-auto mx-auto d-inline-block" style="max-width: 300px;">
-                {% if music_tracks %}
-                    {% for track in music_tracks %}
-                        <option value="{{ loop.index0 }}">{{ track.name }}</option>
-                    {% endfor %}
-                {% else %}
-                    <option value="">No hay pistas disponibles</option>
-                {% endif %}
-            </select>
-        </div>
-        <div class="mt-3">
-            <label for="volumeControl">Volumen:</label>
-            <input type="range" class="form-range w-50 mx-auto" id="volumeControl" min="0" max="1" step="0.1" value="0.7">
-        </div>
-    </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+
+    <!-- ... tu footer ... -->
+
+    <!-- SCRIPTS -->
+    <!-- Bootstrap JS, etc. -->
+
+    <!-- Script global para la animación de texto -->
+    <script>
+        function animateTextFlyOut(text, targetElement) {
+            const elementRect = targetElement.getBoundingClientRect();
+            const container = document.body;
+            const computedStyle = window.getComputedStyle(targetElement);
+            const baseColor = computedStyle.color;
+            const baseFontFamily = computedStyle.fontFamily;
+            const baseFontSize = computedStyle.fontSize;
+
+            // Comprobar si el elemento es visible y tiene dimensiones
+            if (elementRect.width === 0 && elementRect.height === 0 && text.length > 0) {
+                // Podrías querer registrar esto o simplemente retornar si el elemento no es visible
+                // console.warn("Target element for animation is not visible or has no dimensions:", targetElement);
+                return;
+            }
+
+            const startX = elementRect.left + elementRect.width / 2;
+            const startY = elementRect.top + elementRect.height / 2;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char.trim() === '') continue;
+
+                const span = document.createElement('span');
+                span.textContent = char;
+                span.style.position = 'fixed';
+                span.style.left = `${startX}px`;
+                span.style.top = `${startY}px`;
+                span.style.transform = 'translate(-50%, -50%)';
+                span.style.color = baseColor;
+                span.style.fontFamily = baseFontFamily;
+                span.style.fontSize = baseFontSize;
+                span.style.pointerEvents = 'none';
+                span.style.zIndex = '10001'; // Asegurar que esté por encima de otros elementos
+                span.style.willChange = 'transform, opacity';
+                container.appendChild(span);
+
+                const flyDuration = (1800 + Math.random() * 1200); // Duración entre 1.8s y 3s
+                const angle = Math.random() * Math.PI * 2;
+                // Ajusta la distancia si es necesario para los elementos de la navbar
+                const distance = Math.min(window.innerWidth, window.innerHeight) * (0.6 + Math.random() * 1.0); 
+                const endX = Math.cos(angle) * distance;
+                const endY = Math.sin(angle) * distance;
+                const rotation = (Math.random() - 0.5) * 720;
+
+                span.animate([
+                    { transform: `translate(-50%, -50%) translate(0px, 0px) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate(-50%, -50%) translate(${endX}px, ${endY}px) rotate(${rotation}deg)`, opacity: 0 }
+                ], {
+                    duration: flyDuration,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    fill: 'forwards'
+                }).onfinish = () => {
+                    if (span.parentNode) {
+                        span.remove();
+                    }
+                };
+            }
+        }
+    </script>
+
+    {% block scripts %}
+        {# Los scripts de las plantillas hijas se insertarán aquí #}
+    {% endblock %}
+
+    <!-- Script para animar los botones de la barra de navegación -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selector para los enlaces de la barra de navegación. AJÚSTALO si tu estructura es diferente.
+            // Este selector común para Bootstrap es '.navbar-nav .nav-link'.
+            const navBarLinks = document.querySelectorAll('.navbar-nav .nav-link'); 
+            
+            if (navBarLinks.length > 0) {
+                navBarLinks.forEach((link, index) => {
+                    const originalLinkText = link.textContent.trim();
+
+                    // Asegurarse de que el enlace tenga texto y no sea, por ejemplo, un desplegable o solo un icono.
+                    if (originalLinkText !== '' && !link.classList.contains('dropdown-toggle') && !link.querySelector('img') && !link.querySelector('i')) {
+                        
+                        // Intervalo más largo para los elementos de la barra de navegación para que no sea demasiado molesto
+                        const baseIntervalTime = 15000 + (Math.random() * 10000); // Entre 15 y 25 segundos
+                        const randomVariation = Math.random() * 5000; // Variación adicional
+                        const individualInterval = baseIntervalTime + randomVariation;
+
+                        // Retrasar el inicio del ciclo de animación de cada botón para escalonarlos
+                        setTimeout(() => {
+                            // Opcional: primera animación inmediata después del retraso inicial
+                            // if (document.body.contains(link) && getComputedStyle(link).display !== 'none') {
+                            //    animateTextFlyOut(originalLinkText, link);
+                            // }
+                            
+                            setInterval(function() {
+                                // Volver a verificar si el elemento existe y es visible antes de animar
+                                if (document.body.contains(link) && getComputedStyle(link).display !== 'none') {
+                                    animateTextFlyOut(originalLinkText, link);
+                                }
+                            }, individualInterval);
+                        }, index * 1500 + Math.random() * 1000); // Escalonar el inicio de cada ciclo
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

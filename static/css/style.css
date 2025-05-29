@@ -4,6 +4,7 @@ body {
     font-family: Arial, sans-serif; /* Fuente legible */
     margin: 0;
     padding: 0;
+    font-size: 1.17em; /* Tamaño de fuente base (original +30%, luego -10%) */
     /* El fondo visual principal es manejado por #background-container.
        Se podría poner un color de fondo aquí como un último recurso
        si #background-container fallara completamente. */
@@ -215,4 +216,24 @@ a:hover {
 .title-rainbow-effect {
     animation: titleRainbowAnimation 6s infinite linear;
     /* La propiedad 'color' de .animated-title o inline será anulada por la animación */
+}
+
+.lorem-text-large {
+    font-size: 1.404em; /* Aproximadamente 20% más grande que el font-size del body (1.17em * 1.2) */
+}
+
+/* Estilos mejorados para list-group-items en tema oscuro */
+.list-group-item {
+    background-color: rgba(255, 255, 255, 0.08) !important; /* Fondo ligeramente visible, !important para anular BS si es necesario */
+    border-color: rgba(255, 255, 255, 0.25) !important; /* Borde más claro y sutil */
+    color: #ffffff !important; /* Asegurar texto blanco */
+}
+
+/* Estilo para enlaces dentro de list-group-items */
+.list-group-item a {
+    color: #ffcc00; /* Amarillo para enlaces, igual que los enlaces generales */
+}
+
+.list-group-item a:hover {
+    color: #ffd633; /* Un amarillo un poco más claro al pasar el mouse */
 }
