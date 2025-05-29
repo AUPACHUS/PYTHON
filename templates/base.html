@@ -54,7 +54,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if current_endpoint == 'opinion' %}active{% endif %}"
-                           href="{{ url_for('opinion') }}"
+                           href="{{ url_for('opinion') }}" 
                            {% if current_endpoint == 'opinion' %}aria-current="page"{% endif %}>¿Y tú qué opinas?</a>
                     </li>
                     <li class="nav-item">
@@ -81,7 +81,7 @@
     <script>
         const APP_TRACKS = [
             {% for track in music_tracks %}
-                "{{ url_for('static', filename=audio_folder_name + '/' + track.filename) }}"{% if not loop.last %},{% endif %}
+                "{{ url_for('static', filename='audio/' + track.filename) }}"{% if not loop.last %},{% endif %}
             {% endfor %}
         ];
         const APP_BACKGROUND_IMAGES = [
@@ -93,46 +93,12 @@
     <!-- Scripts personalizados -->
     <script src="{{ url_for('static', filename='js/background.js') }}"></script>
     <script src="{{ url_for('static', filename='js/player.js') }}"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <!-- ... tus etiquetas head ... -->
-    <title>{% block title %}Mi Sitio Web{% endblock %}</title>
-    <!-- ... CSS links ... -->
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <!-- O la estructura de tu navbar -->
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('index') }}">Mi Sitio</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('index') }}">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('galeria') }}">Galería</a>
-                    </li>
-                    <!-- Otros enlaces de navegación -->
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    {% block content %}{% endblock %}
-
-    <!-- ... tu footer ... -->
-
-    <!-- SCRIPTS -->
-    <!-- Bootstrap JS, etc. -->
-
-    <!-- Script global para la animación de texto -->
+    <!-- Script global para la animación de texto y animación de la barra de navegación -->
     <script>
         function animateTextFlyOut(text, targetElement) {
+            if (!targetElement || typeof text !== 'string') return;
+
             const elementRect = targetElement.getBoundingClientRect();
             const container = document.body;
             const computedStyle = window.getComputedStyle(targetElement);
@@ -140,9 +106,8 @@
             const baseFontFamily = computedStyle.fontFamily;
             const baseFontSize = computedStyle.fontSize;
 
-            // Comprobar si el elemento es visible y tiene dimensiones
+            // Si el elemento no es visible o no tiene dimensiones, no animar
             if (elementRect.width === 0 && elementRect.height === 0 && text.length > 0) {
-                // Podrías querer registrar esto o simplemente retornar si el elemento no es visible
                 // console.warn("Target element for animation is not visible or has no dimensions:", targetElement);
                 return;
             }
@@ -159,81 +124,56 @@
                 span.style.position = 'fixed';
                 span.style.left = `${startX}px`;
                 span.style.top = `${startY}px`;
-                span.style.transform = 'translate(-50%, -50%)';
+                span.style.transform = 'translate(-50%, -50%)'; // Centrar el span en su origen
                 span.style.color = baseColor;
                 span.style.fontFamily = baseFontFamily;
                 span.style.fontSize = baseFontSize;
                 span.style.pointerEvents = 'none';
                 span.style.zIndex = '10001'; // Asegurar que esté por encima de otros elementos
-                span.style.willChange = 'transform, opacity';
+                span.style.willChange = 'transform, opacity'; // Optimización para el navegador
                 container.appendChild(span);
 
                 const flyDuration = (1800 + Math.random() * 1200); // Duración entre 1.8s y 3s
                 const angle = Math.random() * Math.PI * 2;
-                // Ajusta la distancia si es necesario para los elementos de la navbar
-                const distance = Math.min(window.innerWidth, window.innerHeight) * (0.6 + Math.random() * 1.0); 
+                // Distancia de recorrido (similar a la que te gustó, bastante amplia)
+                const distance = Math.min(window.innerWidth, window.innerHeight) * (0.8 + Math.random() * 1.2);
                 const endX = Math.cos(angle) * distance;
                 const endY = Math.sin(angle) * distance;
-                const rotation = (Math.random() - 0.5) * 720;
+                const rotation = (Math.random() - 0.5) * 720; // Rotación aleatoria
 
                 span.animate([
                     { transform: `translate(-50%, -50%) translate(0px, 0px) rotate(0deg)`, opacity: 1 },
                     { transform: `translate(-50%, -50%) translate(${endX}px, ${endY}px) rotate(${rotation}deg)`, opacity: 0 }
                 ], {
                     duration: flyDuration,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    fill: 'forwards'
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Suavizado para efecto natural
+                    fill: 'forwards' // Mantiene el estado final de la animación
                 }).onfinish = () => {
-                    if (span.parentNode) {
+                    if (span.parentNode) { // Comprobar si el span aún existe antes de removerlo
                         span.remove();
                     }
                 };
             }
         }
-    </script>
 
-    {% block scripts %}
-        {# Los scripts de las plantillas hijas se insertarán aquí #}
-    {% endblock %}
-
-    <!-- Script para animar los botones de la barra de navegación -->
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Selector para los enlaces de la barra de navegación. AJÚSTALO si tu estructura es diferente.
-            // Este selector común para Bootstrap es '.navbar-nav .nav-link'.
-            const navBarLinks = document.querySelectorAll('.navbar-nav .nav-link'); 
-            
+            const navBarLinks = document.querySelectorAll('.navbar-nav .nav-link');
             if (navBarLinks.length > 0) {
                 navBarLinks.forEach((link, index) => {
                     const originalLinkText = link.textContent.trim();
-
-                    // Asegurarse de que el enlace tenga texto y no sea, por ejemplo, un desplegable o solo un icono.
                     if (originalLinkText !== '' && !link.classList.contains('dropdown-toggle') && !link.querySelector('img') && !link.querySelector('i')) {
-                        
-                        // Intervalo más largo para los elementos de la barra de navegación para que no sea demasiado molesto
-                        const baseIntervalTime = 15000 + (Math.random() * 10000); // Entre 15 y 25 segundos
-                        const randomVariation = Math.random() * 5000; // Variación adicional
-                        const individualInterval = baseIntervalTime + randomVariation;
-
-                        // Retrasar el inicio del ciclo de animación de cada botón para escalonarlos
+                        const baseIntervalTime = 15000 + (Math.random() * 10000); // Intervalo largo (15-25s)
                         setTimeout(() => {
-                            // Opcional: primera animación inmediata después del retraso inicial
-                            // if (document.body.contains(link) && getComputedStyle(link).display !== 'none') {
-                            //    animateTextFlyOut(originalLinkText, link);
-                            // }
-                            
                             setInterval(function() {
-                                // Volver a verificar si el elemento existe y es visible antes de animar
                                 if (document.body.contains(link) && getComputedStyle(link).display !== 'none') {
                                     animateTextFlyOut(originalLinkText, link);
                                 }
-                            }, individualInterval);
-                        }, index * 1500 + Math.random() * 1000); // Escalonar el inicio de cada ciclo
+                            }, baseIntervalTime);
+                        }, index * 1200 + Math.random() * 800); // Inicio escalonado
                     }
                 });
             }
         });
     </script>
-
 </body>
 </html>

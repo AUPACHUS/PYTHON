@@ -261,6 +261,41 @@
                 }
             });
         });
+
+        // Animación de caída para el bloque de texto de bienvenida en español
+        const welcomeTextBlock = document.getElementById('translatable-welcome-text');
+        let fallingAnimationInterval;
+
+        if (welcomeTextBlock) {
+            const fallAnimationDuration = 3500; // Duración de la animación de caída en ms (e.g., 3.5 segundos)
+            const fallIntervalTime = 12000;    // Intervalo entre caídas en ms (e.g., 12 segundos)
+
+            function animateFall(element) {
+                // Asegurarse de que el elemento esté en su posición inicial antes de caer
+                element.style.transform = 'translateY(0px)';
+                element.style.opacity = '1';
+
+                element.animate([
+                    { transform: 'translateY(0px)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight * 0.8}px)`, opacity: 0 } // Cae el 80% de la altura de la ventana
+                ], {
+                    duration: fallAnimationDuration,
+                    easing: 'ease-in', // Efecto de aceleración hacia abajo
+                    fill: 'forwards' // Mantiene el estado final (invisible y abajo)
+                }).onfinish = () => {
+                    // Después de que la animación termina, resetear para la próxima vez (si es necesario)
+                    // Para un efecto de "cae y se va", y luego reaparece para caer de nuevo:
+                    setTimeout(() => {
+                        element.style.transform = 'translateY(0px)';
+                        element.style.opacity = '1';
+                    }, 50); // Pequeño delay antes de reaparecer para evitar flicker
+                };
+            }
+
+            fallingAnimationInterval = setInterval(() => {
+                animateFall(welcomeTextBlock);
+            }, fallIntervalTime);
+        });
     });
 </script>
 </div>

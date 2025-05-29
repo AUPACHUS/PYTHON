@@ -12,19 +12,11 @@
         <h2 class="text-center text-readable mb-3 animated-title title-rainbow-effect" style="font-size: 3rem;">Noticias del día</h2>
         <ul class="list-group">
             {% for headline in headlines %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
+                <li class="list-group-item">
                     <div>
                         <a href="{{ headline.url }}" target="_blank" rel="noopener noreferrer">
                             {{ headline.title }}
                         </a>
-                    </div>
-                    <div class="ms-2">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="translateText('{{ headline.title | e }}', 'es')">
-                            A Español
-                        </button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="translateText('{{ headline.title | e }}', 'en')">
-                            A Inglés
-                        </button>
                     </div>
                 </li>
             {% else %}
