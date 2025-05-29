@@ -284,5 +284,7 @@ if __name__ == "__main__":
     # En producción, el servidor WSGI (Gunicorn) ejecutará la app,
     # y el modo debug debería estar desactivado.
     # Las plataformas de hosting suelen permitir configurar FLASK_DEBUG=0 como variable de entorno.
-    # Si FLASK_DEBUG no está configurada, Flask _DEBUG se establece en False por defecto si no se especifica en app.config o app.run().
-    app.run(host='0.0.0.0', port=5000, debug=os.environ.get('FLASK_DEBUG', 'false').lower() == 'true')
+    # Si FLASK_DEBUG no está configurada, Flask _DEBUG se establece en False por defecto.
+    port = int(os.environ.get("PORT", 5000))
+    debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1']
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
