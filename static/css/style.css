@@ -279,3 +279,17 @@ a:hover {
     --bs-btn-disabled-border-color: #5865F2;
     --bs-gradient: none;
 }
+/* En c:\Users\JESUS\Desktop\PYTHON\static\css\style.css */
+/* ... otros estilos ... */
+
+/* Estilo para el contenedor de la animación del avatar si es necesario */
+#avatar-animation-container {
+  /* position: fixed; top: 80px; right: 20px; width: 300px; height: 300px; z-index: 1000; */
+  /* Estos estilos ya están inline en base.html, pero podrías moverlos aquí */
+  /* border: 1px solid red; */ /* Útil para depurar la posición */
+}
+
+#arkanoid-avatar {
+  /* Ajusta el tamaño base del avatar si es necesario */
+  /* width: 100px; height: 100px; */ /* Ya está inline */
+}

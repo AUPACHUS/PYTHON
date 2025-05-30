@@ -64,6 +64,30 @@
         </div>
     </nav>
 
+    <!-- Contenedor para la imagen y el botón desplegable de GitHub - AHORA EN BASE.HTML -->
+    <!-- Lo posicionaremos de forma fija para que no afecte el flujo del contenido -->
+    <div id="avatar-animation-container" style="position: fixed; top: 80px; right: 20px; z-index: 1000; width: auto; height: auto;">
+        <!-- Imagen con movimiento Arkanoid (será la base de la animación) -->
+        <img id="arkanoid-avatar"
+             src="{{ url_for('static', filename='img/1(11).png') }}"
+             alt="Aupachus"
+             class="img-fluid rounded-circle"
+             style="position: fixed; width: 250px; height: 250px; cursor: pointer; z-index: 1001;"
+             loading="lazy">
+
+        <!-- Botón Desplegable de GitHub (se posicionará relativo al avatar principal vía JS) -->
+        <div class="dropdown" id="github-dropdown-container" style="position: fixed; z-index: 1002; visibility: hidden;">
+            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="githubDropdownBase" data-bs-toggle="dropdown" aria-expanded="false">
+                GitHub
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="githubDropdownBase">
+                <li><a class="dropdown-item" href="https://aupachus.github.io/HACKENVIRONMENT/" target="_blank" rel="noopener noreferrer">Hackenvironment</a></li>
+                <li><a class="dropdown-item" href="https://aupachus.github.io/web2/#top" target="_blank" rel="noopener noreferrer">Web2</a></li>
+                <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
+            </ul>
+        </div>
+    </div>
+
     <!-- Contenido principal -->
     <div class="container mt-4">
         {% block content %}
@@ -153,6 +177,166 @@
             }
         }
 
+        // --- NUEVA ANIMACIÓN AVANZADA DEL AVATAR ---
+        function advancedAvatarAnimation() {
+            const avatarContainer = document.getElementById('avatar-animation-container');
+            const mainAvatar = document.getElementById('arkanoid-avatar');
+            const githubDropdown = document.getElementById('github-dropdown-container');
+            if (!avatarContainer || !mainAvatar) return;
+
+            let duplicatedAvatars = [];
+            const maxDuplicates = 40; // Aumentado a 40 copias
+            let duplicateInterval;
+            let explosionTimeout;
+
+            // --- Lógica de Arkanoid para el avatar principal (simplificada para este ejemplo) ---
+            // Posición inicial aleatoria en la pantalla
+            let mainAvatarWidth = mainAvatar.offsetWidth; // Obtener tamaño real
+            let mainAvatarHeight = mainAvatar.offsetHeight;
+            let posX = Math.random() * (window.innerWidth - mainAvatarWidth);
+            let posY = Math.random() * (window.innerHeight - mainAvatarHeight);
+            let speedX = (Math.random() - 0.5) * 6; // Aumentada velocidad base del avatar principal
+            let speedY = (Math.random() - 0.5) * 6; // Aumentada velocidad base del avatar principal
+            let isDragging = false;
+            let dragOffsetX, dragOffsetY;
+
+            function updateMainAvatarPosition() {
+                if (isDragging) return;
+                posX += speedX;
+                posY += speedY;
+
+                // Rebote en los bordes de la ventana
+                if (posX <= 0 || posX >= window.innerWidth - mainAvatarWidth) speedX *= -1;
+                if (posY <= 0 || posY >= window.innerHeight - mainAvatarHeight) speedY *= -1;
+
+                // Asegurar que no se salga completamente de la pantalla al rebotar
+                posX = Math.max(0, Math.min(posX, window.innerWidth - mainAvatarWidth));
+                posY = Math.max(0, Math.min(posY, window.innerHeight - mainAvatarHeight));
+
+                mainAvatar.style.left = `${posX}px`;
+                mainAvatar.style.top = `${posY}px`;
+
+                // Actualizar posición del dropdown de GitHub para que siga al avatar
+                if(githubDropdown) {
+                    githubDropdown.style.left = `${posX + mainAvatarWidth / 2 - githubDropdown.offsetWidth / 2}px`;
+                    githubDropdown.style.top = `${posY + mainAvatarHeight}px`; // Debajo del avatar
+                    githubDropdown.style.visibility = 'visible';
+                }
+
+                requestAnimationFrame(updateMainAvatarPosition);
+            }
+            // Eventos de arrastre para el avatar principal
+            mainAvatar.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                dragOffsetX = e.clientX - mainAvatar.getBoundingClientRect().left;
+                dragOffsetY = e.clientY - mainAvatar.getBoundingClientRect().top;
+                mainAvatar.style.cursor = 'grabbing';
+                mainAvatar.style.transform = 'scale(1.1)';
+            });
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging) return;
+                posX = e.clientX - dragOffsetX;
+                posY = e.clientY - dragOffsetY;
+                // Limitar al contenedor de animación
+                posX = Math.max(0, Math.min(posX, window.innerWidth - mainAvatarWidth));
+                posY = Math.max(0, Math.min(posY, window.innerHeight - mainAvatarHeight));
+                mainAvatar.style.left = posX + 'px';
+                mainAvatar.style.top = posY + 'px';
+            });
+            document.addEventListener('mouseup', function() {
+                if (isDragging) {
+                    isDragging = false;
+                    mainAvatar.style.cursor = 'pointer';
+                    mainAvatar.style.transform = 'scale(1)';
+                    speedX = (Math.random() - 0.5) * 8; // Aumentada velocidad al reanudar
+                    speedY = (Math.random() - 0.5) * 8; // Aumentada velocidad al reanudar
+                }
+            });
+            // Actualizar tamaño del avatar si la ventana cambia de tamaño
+            window.addEventListener('resize', () => {
+                mainAvatarWidth = mainAvatar.offsetWidth;
+                mainAvatarHeight = mainAvatar.offsetHeight;
+            });
+            updateMainAvatarPosition();
+            // --- Fin lógica Arkanoid ---
+
+            // --- Lógica para mover duplicados ---
+            function updateDuplicatesPosition() {
+                duplicatedAvatars.forEach(dupData => {
+                    dupData.x += dupData.speedX;
+                    dupData.y += dupData.speedY;
+
+                    // Rebote en los bordes de la ventana para duplicados
+                    if (dupData.x <= 0 || dupData.x >= window.innerWidth - dupData.element.offsetWidth) {
+                        dupData.speedX *= -1;
+                    }
+                    if (dupData.y <= 0 || dupData.y >= window.innerHeight - dupData.element.offsetHeight) {
+                        dupData.speedY *= -1;
+                    }
+
+                    dupData.x = Math.max(0, Math.min(dupData.x, window.innerWidth - dupData.element.offsetWidth));
+                    dupData.y = Math.max(0, Math.min(dupData.y, window.innerHeight - dupData.element.offsetHeight));
+
+                    dupData.element.style.left = `${dupData.x}px`;
+                    dupData.element.style.top = `${dupData.y}px`;
+                });
+                if (duplicatedAvatars.length > 0) requestAnimationFrame(updateDuplicatesPosition);
+            }
+
+            function createDuplicate() {
+                if (duplicatedAvatars.length >= maxDuplicates) {
+                    explodeAvatars();
+                    return;
+                }
+
+                const duplicate = mainAvatar.cloneNode(true);
+                duplicate.id = ''; // Evitar IDs duplicados
+                duplicate.style.position = 'fixed'; // Para que se posicione relativo a la ventana
+                duplicate.style.left = mainAvatar.style.left;
+                duplicate.style.top = mainAvatar.style.top;
+                duplicate.style.opacity = '0.7';
+                duplicate.style.transform = `scale(${1 - duplicatedAvatars.length * 0.05})`; // Más pequeñas
+                duplicate.style.zIndex = 1001 - (duplicatedAvatars.length + 1); // Detrás del original
+                
+                const dupData = {
+                    element: duplicate,
+                    x: parseFloat(mainAvatar.style.left),
+                    y: parseFloat(mainAvatar.style.top),
+                    speedX: (Math.random() - 0.5) * 4, // Velocidad aleatoria para el duplicado
+                    speedY: (Math.random() - 0.5) * 4  // Velocidad aleatoria para el duplicado
+                };
+
+                document.body.appendChild(duplicate); // Añadir al body para movimiento global
+                duplicatedAvatars.push(dupData);
+
+                // Iniciar animación de duplicados si es el primero
+                if (duplicatedAvatars.length === 1) {
+                    updateDuplicatesPosition();
+                }
+            }
+
+            function explodeAvatars() {
+                clearInterval(duplicateInterval);
+                duplicatedAvatars.forEach(dupData => {
+                    // Animación de explosión simple: se dispersan y desaparecen
+                    dupData.element.animate([
+                        { transform: dupData.element.style.transform + ' translate(0,0) scale(1)', opacity: 0.7 },
+                        { transform: dupData.element.style.transform + ` translate(${(Math.random()-0.5)*200}px, ${(Math.random()-0.5)*200}px) scale(0)`, opacity: 0 }
+                    ], { duration: 588, easing: 'ease-out' }).onfinish = () => dupData.element.remove();
+                });
+                duplicatedAvatars = [];
+                explosionTimeout = setTimeout(startCycle, 882); // Espera reducida (1500 / 1.7)
+            }
+
+            function startCycle() {
+                clearTimeout(explosionTimeout);
+                mainAvatar.style.opacity = '1'; // Asegurar que el principal sea visible
+                duplicateInterval = setInterval(createDuplicate, 2000); // Duplicar cada 2 segundos
+            }
+            startCycle(); // Iniciar el ciclo
+        }
+        // --- FIN NUEVA ANIMACIÓN AVANZADA DEL AVATAR ---
+
         document.addEventListener('DOMContentLoaded', function() {
             const navBarLinks = document.querySelectorAll('.navbar-nav .nav-link');
             if (navBarLinks.length > 0) {
@@ -170,6 +354,9 @@
                     }
                 });
             }
+
+            // Iniciar la nueva animación del avatar
+            advancedAvatarAnimation();
 
             // Efecto de explosión de letras al pasar el ratón sobre elementos de texto elegibles
             const hoverAnimatedElementsCooldown = new Set(); // Para el enfriamiento

@@ -5,29 +5,7 @@
 {% block content %}
 <div class="container mt-5">
     <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenid@ a mi Web</h1>
-        
-    <!-- Contenedor para la imagen y el botón desplegable de GitHub -->
-    <div class="d-flex justify-content-center align-items-center mb-5" style="position: relative; height: 300px;">
-        <!-- Imagen con movimiento Arkanoid -->
-        <img id="arkanoid-avatar" 
-             src="{{ url_for('static', filename='img/1(11).png') }}" 
-             alt="Aupachus" 
-             class="img-fluid rounded-circle" 
-             style="position: absolute; width: 250px; height: 250px; cursor: pointer; z-index: 1;"
-             loading="lazy">
-        
-        <!-- Botón Desplegable de GitHub (se mantiene en su posición) -->
-        <div class="dropdown" style="position: relative; z-index: 2;">
-            <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="githubDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                Github
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="githubDropdown">
-                <li><a class="dropdown-item" href="https://aupachus.github.io/HACKENVIRONMENT/" target="_blank" rel="noopener noreferrer">Hackenvironment</a></li>
-                <li><a class="dropdown-item" href="https://aupachus.github.io/web2/#top" target="_blank" rel="noopener noreferrer">Web2</a></li>
-                <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
-            </ul>
-        </div>
-    </div>
+    <!-- El avatar y el botón de GitHub se han movido a base.html para aparecer en todas las páginas -->
     
     <div class="text-readable">
         <!-- Bloque de texto traducible -->
@@ -88,79 +66,7 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuración del movimiento Arkanoid para la imagen
-            const avatar = document.getElementById('arkanoid-avatar');
-            const container = avatar.parentElement;
-            let posX = Math.random() * (container.clientWidth - 100);
-            let posY = Math.random() * (container.clientHeight - 100);
-            let speedX = (Math.random() - 0.5) * 8;
-            let speedY = (Math.random() - 0.5) * 8;
-            let isDragging = false;
-            let dragOffsetX = 0;
-            let dragOffsetY = 0;
-            
-            // Función para actualizar la posición
-            function updatePosition() {
-                if (isDragging) return;
-                
-                posX += speedX;
-                posY += speedY;
-                
-                // Detección de colisiones con los bordes
-                if (posX <= 0 || posX >= container.clientWidth - 100) {
-                    speedX = -speedX * 1.05; // Aumentar velocidad ligeramente
-                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
-                }
-                
-                if (posY <= 0 || posY >= container.clientHeight - 100) {
-                    speedY = -speedY * 1.05;
-                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
-                }
-                
-                // Aplicar posición
-                avatar.style.left = posX + 'px';
-                avatar.style.top = posY + 'px';
-                
-                requestAnimationFrame(updatePosition);
-            }
-            
-            // Eventos para arrastrar la imagen
-            avatar.addEventListener('mousedown', function(e) {
-                isDragging = true;
-                dragOffsetX = e.clientX - posX - container.getBoundingClientRect().left;
-                dragOffsetY = e.clientY - posY - container.getBoundingClientRect().top;
-                avatar.style.cursor = 'grabbing';
-                avatar.style.transform = 'scale(1.1)';
-            });
-            
-            document.addEventListener('mousemove', function(e) {
-                if (!isDragging) return;
-                
-                posX = e.clientX - container.getBoundingClientRect().left - dragOffsetX;
-                posY = e.clientY - container.getBoundingClientRect().top - dragOffsetY;
-                
-                // Limitar a los bordes
-                posX = Math.max(0, Math.min(posX, container.clientWidth - 100));
-                posY = Math.max(0, Math.min(posY, container.clientHeight - 100));
-                
-                avatar.style.left = posX + 'px';
-                avatar.style.top = posY + 'px';
-            });
-            
-            document.addEventListener('mouseup', function() {
-                if (isDragging) {
-                    isDragging = false;
-                    avatar.style.cursor = 'pointer';
-                    avatar.style.transform = 'scale(1)';
-                    // Cambiar dirección al soltar
-                    speedX = (Math.random() - 0.5) * 8;
-                    speedY = (Math.random() - 0.5) * 8;
-                    updatePosition();
-                }
-            });
-            
-            // Iniciar animación
-            updatePosition();
+            // La lógica de animación del avatar se ha movido a base.html
 
             // Configuración de traducciones
             const translations = {
