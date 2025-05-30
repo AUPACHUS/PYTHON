@@ -15,7 +15,7 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link {% if current_endpoint == 'home' %}active{% endif %}"
@@ -60,6 +60,29 @@
                         <a class="nav-link" href="https://discord.gg/VtA2mXkRBT" target="_blank" rel="noopener noreferrer">DISCORD</a>
                     </li>
                 </ul>
+                <!-- Right-aligned GitHub and PayPal buttons -->
+                <div class="d-flex ms-auto align-items-center">
+                    <!-- GitHub Dropdown Copy -->
+                    <div class="nav-item dropdown me-2">
+                        <a class="btn btn-outline-light dropdown-toggle btn-sm" href="#" id="navbarGithubDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            GitHub
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarGithubDropdown">
+                            <li><a class="dropdown-item" href="https://aupachus.github.io/HACKENVIRONMENT/" target="_blank" rel="noopener noreferrer">Hackenvironment</a></li>
+                            <li><a class="dropdown-item" href="https://aupachus.github.io/web2/#top" target="_blank" rel="noopener noreferrer">Web2</a></li>
+                            <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
+                        </ul>
+                    </div>
+                    <!-- PayPal Button Copy -->
+                    <div class="nav-item">
+                        <form action="https://www.paypal.com/donate" method="post" target="_blank">
+                            <input type="hidden" name="hosted_button_id" value="V8DHJUCE86P88" />
+                            <button type="submit" class="btn btn-outline-warning btn-sm">
+                                PayPal
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
