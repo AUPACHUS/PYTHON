@@ -87,35 +87,6 @@
     </div>
     
     <script>
-        // Función para animar texto (que faltaba en el original)
-        function animateTextFlyOut(text, element) {
-            if (!text || !element) return;
-            
-            // Limpiar el elemento
-            element.innerHTML = '';
-            
-            // Crear un span para cada letra
-            text.split('').forEach((char, index) => {
-                const span = document.createElement('span');
-                span.textContent = char === ' ' ? '&nbsp;' : char;
-                span.style.display = 'inline-block';
-                span.style.transition = `transform 0.5s ease, opacity 0.5s ease`;
-                span.style.transitionDelay = `${index * 0.05}s`;
-                element.appendChild(span);
-                
-                // Iniciar animación después de un pequeño retraso
-                setTimeout(() => {
-                    span.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
-                    span.style.opacity = '0';
-                }, 50);
-            });
-            
-            // Restaurar texto después de la animación
-            setTimeout(() => {
-                element.textContent = text;
-            }, text.length * 100 + 1000);
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             // Configuración del movimiento Arkanoid para la imagen
             const avatar = document.getElementById('arkanoid-avatar');
@@ -276,7 +247,8 @@
                     const lang = this.getAttribute('data-lang');
                     if (translatableTextContainer && translations[lang]) {
                         // Animación de salida antes de cambiar el texto
-                        animateTextFlyOut(translatableTextContainer.textContent, translatableTextContainer);
+                        // Ensure global animateTextFlyOut is used
+                        window.animateTextFlyOut(translatableTextContainer.textContent.trim(), translatableTextContainer);
                         
                         // Cambiar el contenido después de un breve retraso
                         setTimeout(() => {
@@ -332,7 +304,7 @@
                     
                     // Call the existing animation function
                     // 'this' refers to the button element (the <a> tag)
-                    animateTextFlyOut(originalText, this);
+                    window.animateTextFlyOut(originalText, this); // Use global function
 
                     // Set a timeout to reset the isAnimating flag
                     // This duration should match or slightly exceed the text restoration timeout in animateTextFlyOut

@@ -43,49 +43,49 @@
             <h3 class="text-center mb-4">Recursos de Aprendizaje</h3>
             <div class="row g-3 text-center" id="learning-resources-buttons-pdfs">
                 <div class="col-md-4 col-sm-6">
-                    <a href="https://docs.python.org/es/3/tutorial/" target="_blank" rel="noopener"
-                       class="btn btn-outline-primary w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                    <a href="https://docs.python.org/es/3/tutorial/" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-primary w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fab fa-python fa-2x mb-2"></i>
-                        Tutorial Python Oficial
+                        <span class="exploding-text">Tutorial Python Oficial</span>
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6">
-                    <a href="https://greenteapress.com/wp/think-python-2e/" target="_blank" rel="noopener"
-                       class="btn btn-outline-success w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                    <a href="https://greenteapress.com/wp/think-python-2e/" target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-success w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fas fa-book fa-2x mb-2"></i>
-                        Think Python (EN)
+                        <span class="exploding-text">Think Python (EN)</span>
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6">
                     <a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/pages/lecture-notes/" 
-                       target="_blank" rel="noopener"
-                       class="btn btn-outline-info w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-info w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fas fa-project-diagram fa-2x mb-2"></i>
-                        Algoritmos MIT
+                        <span class="exploding-text">Algoritmos MIT</span>
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6">
                     <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" 
-                       target="_blank" rel="noopener"
-                       class="btn btn-outline-warning w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-warning w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fas fa-flask fa-2x mb-2"></i>
-                        Mega Tutorial Flask
+                        <span class="exploding-text">Mega Tutorial Flask</span>
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6">
                     <a href="https://getbootstrap.com/docs/5.1/getting-started/introduction/" 
-                       target="_blank" rel="noopener"
-                       class="btn btn-outline-danger w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-danger w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fab fa-bootstrap fa-2x mb-2"></i>
-                        Bootstrap Docs
+                        <span class="exploding-text">Bootstrap Docs</span>
                     </a>
                 </div>
                 <div class="col-md-4 col-sm-6">
                     <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" 
-                       target="_blank" rel="noopener"
-                       class="btn btn-outline-dark w-100 h-100 d-flex flex-column py-3 learning-btn-pdf">
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn btn-outline-dark w-100 h-100 d-flex flex-column py-3 learning-btn-pdf" style="border-width: 3px;">
                         <i class="fas fa-chart-bar fa-2x mb-2"></i>
-                        Data Science
+                        <span class="exploding-text">Data Science</span>
                     </a>
                 </div>
             </div>
@@ -126,36 +126,29 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Animación de texto para botones de recursos
-    function animateTextFlyOut(element) {
-        const text = element.textContent.trim();
-        if (!text) return;
-        
-        element.innerHTML = '';
-        
-        text.split('').forEach((char, index) => {
-            const span = document.createElement('span');
-            span.textContent = char === ' ' ? '&nbsp;' : char;
-            span.style.display = 'inline-block';
-            span.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
-            span.style.transitionDelay = `${index * 0.05}s`;
-            element.appendChild(span);
-            
-            setTimeout(() => {
-                span.style.transform = `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) rotate(${Math.random() * 720 - 360}deg)`;
-                span.style.opacity = '0';
-            }, 50);
-        });
-        
-        setTimeout(() => { 
-            element.textContent = text; 
-        }, text.length * 100 + 1000);
-    }
-
     // Configuración de eventos para botones de recursos
-    document.querySelectorAll('.learning-btn-pdf').forEach(btn => {
-        btn.addEventListener('mouseenter', function() {
-            animateTextFlyOut(this.querySelector('span') || this);
+    document.querySelectorAll('.learning-btn-pdf').forEach(button => { // 'button' is the <a> tag
+        const textElement = button.querySelector('.exploding-text'); // Target the span for animation
+        
+        if (!textElement) return; // Skip if the span isn't found
+
+        const originalText = textElement.textContent.trim();
+        let isAnimating = false; 
+
+        button.addEventListener('mouseenter', function() {
+            if (isAnimating || !originalText) {
+                return; // Don't animate if already animating or no text
+            }
+            isAnimating = true;
+            
+            // Use the global animateTextFlyOut function from base.html
+            window.animateTextFlyOut(originalText, textElement); 
+
+            // Reset the isAnimating flag after the animation duration
+            // Duration from animateTextFlyOut (text.length * 100 + 1000) + buffer
+            setTimeout(() => {
+                isAnimating = false;
+            }, (originalText.length * 100) + 1000 + 200); 
         });
     });
 
