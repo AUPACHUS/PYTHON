@@ -178,95 +178,229 @@
         }
 
         // --- NUEVA ANIMACIÓN AVANZADA DEL AVATAR ---
-        function advancedAvatarAnimation() {
-            const avatarContainer = document.getElementById('avatar-animation-container');
-            const mainAvatar = document.getElementById('arkanoid-avatar');
-            const githubDropdown = document.getElementById('github-dropdown-container');
-            if (!avatarContainer || !mainAvatar) return;
+        // Store references to event handlers to remove them later
+        let advAvatar_mainAvatarMouseDownHandler, advAvatar_documentMouseMoveHandler, advAvatar_documentMouseUpHandler;
+        let advAvatar_mainAvatarMouseEnterHandler, advAvatar_mainAvatarMouseLeaveHandler;
+        let advAvatar_windowResizeHandler;
 
-            let duplicatedAvatars = [];
-            const maxDuplicates = 40; // Aumentado a 40 copias
-            let duplicateInterval;
-            let explosionTimeout;
+        // Animation state variables
+        let advAvatar_mainElement, advAvatar_githubDropdown;
+        let advAvatar_duplicatedAvatars = []; // Array of {element, x, y, speedX, speedY}
+        let advAvatar_duplicateIntervalId, advAvatar_explosionTimeoutId;
+        let advAvatar_mainAnimFrameId, advAvatar_duplicatesAnimFrameId;
 
-            // --- Lógica de Arkanoid para el avatar principal (simplificada para este ejemplo) ---
-            // Posición inicial aleatoria en la pantalla
-            let mainAvatarWidth = mainAvatar.offsetWidth; // Obtener tamaño real
-            let mainAvatarHeight = mainAvatar.offsetHeight;
-            let posX = Math.random() * (window.innerWidth - mainAvatarWidth);
-            let posY = Math.random() * (window.innerHeight - mainAvatarHeight);
-            let speedX = (Math.random() - 0.5) * 6; // Aumentada velocidad base del avatar principal
-            let speedY = (Math.random() - 0.5) * 6; // Aumentada velocidad base del avatar principal
-            let isDragging = false;
-            let dragOffsetX, dragOffsetY;
+        let advAvatar_isPausedByHover = false;
+        let advAvatar_isDragging = false;
+        let advAvatar_posX, advAvatar_posY, advAvatar_speedX, advAvatar_speedY;
+        let advAvatar_width, advAvatar_height;
+        let advAvatar_dragOffsetX, advAvatar_dragOffsetY;
 
-            function updateMainAvatarPosition() {
-                if (isDragging) return;
-                posX += speedX;
-                posY += speedY;
+        const ADVAVATAR_MAX_DUPLICATES = 40;
 
-                // Rebote en los bordes de la ventana
-                if (posX <= 0 || posX >= window.innerWidth - mainAvatarWidth) speedX *= -1;
-                if (posY <= 0 || posY >= window.innerHeight - mainAvatarHeight) speedY *= -1;
-
-                // Asegurar que no se salga completamente de la pantalla al rebotar
-                posX = Math.max(0, Math.min(posX, window.innerWidth - mainAvatarWidth));
-                posY = Math.max(0, Math.min(posY, window.innerHeight - mainAvatarHeight));
-
-                mainAvatar.style.left = `${posX}px`;
-                mainAvatar.style.top = `${posY}px`;
-
-                // Actualizar posición del dropdown de GitHub para que siga al avatar
-                if(githubDropdown) {
-                    githubDropdown.style.left = `${posX + mainAvatarWidth / 2 - githubDropdown.offsetWidth / 2}px`;
-                    githubDropdown.style.top = `${posY + mainAvatarHeight}px`; // Debajo del avatar
-                    githubDropdown.style.visibility = 'visible';
-                }
-
-                requestAnimationFrame(updateMainAvatarPosition);
+        function advAvatar_cleanupPreviousAnimation() {
+            if (advAvatar_mainElement) {
+                advAvatar_mainElement.removeEventListener('mousedown', advAvatar_mainAvatarMouseDownHandler);
+                advAvatar_mainElement.removeEventListener('mouseenter', advAvatar_mainAvatarMouseEnterHandler);
+                advAvatar_mainElement.removeEventListener('mouseleave', advAvatar_mainAvatarMouseLeaveHandler);
+                advAvatar_mainElement.style.cursor = 'pointer';
+                advAvatar_mainElement.style.transform = 'scale(1)';
             }
-            // Eventos de arrastre para el avatar principal
-            mainAvatar.addEventListener('mousedown', function(e) {
-                isDragging = true;
-                dragOffsetX = e.clientX - mainAvatar.getBoundingClientRect().left;
-                dragOffsetY = e.clientY - mainAvatar.getBoundingClientRect().top;
-                mainAvatar.style.cursor = 'grabbing';
-                mainAvatar.style.transform = 'scale(1.1)';
-            });
-            document.addEventListener('mousemove', function(e) {
-                if (!isDragging) return;
-                posX = e.clientX - dragOffsetX;
-                posY = e.clientY - dragOffsetY;
-                // Limitar al contenedor de animación
-                posX = Math.max(0, Math.min(posX, window.innerWidth - mainAvatarWidth));
-                posY = Math.max(0, Math.min(posY, window.innerHeight - mainAvatarHeight));
-                mainAvatar.style.left = posX + 'px';
-                mainAvatar.style.top = posY + 'px';
-            });
-            document.addEventListener('mouseup', function() {
-                if (isDragging) {
-                    isDragging = false;
-                    mainAvatar.style.cursor = 'pointer';
-                    mainAvatar.style.transform = 'scale(1)';
-                    speedX = (Math.random() - 0.5) * 8; // Aumentada velocidad al reanudar
-                    speedY = (Math.random() - 0.5) * 8; // Aumentada velocidad al reanudar
+            document.removeEventListener('mousemove', advAvatar_documentMouseMoveHandler);
+            document.removeEventListener('mouseup', advAvatar_documentMouseUpHandler);
+            window.removeEventListener('resize', advAvatar_windowResizeHandler);
+
+            clearInterval(advAvatar_duplicateIntervalId); advAvatar_duplicateIntervalId = null;
+            clearTimeout(advAvatar_explosionTimeoutId); advAvatar_explosionTimeoutId = null;
+            cancelAnimationFrame(advAvatar_mainAnimFrameId); advAvatar_mainAnimFrameId = null;
+            cancelAnimationFrame(advAvatar_duplicatesAnimFrameId); advAvatar_duplicatesAnimFrameId = null;
+
+            advAvatar_duplicatedAvatars.forEach(dupData => {
+                if (dupData.element && dupData.element.parentNode) {
+                    dupData.element.remove();
                 }
             });
-            // Actualizar tamaño del avatar si la ventana cambia de tamaño
-            window.addEventListener('resize', () => {
-                mainAvatarWidth = mainAvatar.offsetWidth;
-                mainAvatarHeight = mainAvatar.offsetHeight;
-            });
-            updateMainAvatarPosition();
-            // --- Fin lógica Arkanoid ---
+            advAvatar_duplicatedAvatars = [];
 
-            // --- Lógica para mover duplicados ---
-            function updateDuplicatesPosition() {
-                duplicatedAvatars.forEach(dupData => {
+            advAvatar_isPausedByHover = false;
+            advAvatar_isDragging = false;
+        }
+
+        function advancedAvatarAnimation() {
+            advAvatar_cleanupPreviousAnimation(); 
+
+            advAvatar_mainElement = document.getElementById('arkanoid-avatar');
+            advAvatar_githubDropdown = document.getElementById('github-dropdown-container');
+
+            if (!advAvatar_mainElement) {
+                return;
+            }
+            advAvatar_mainElement.style.opacity = '1';
+            advAvatar_mainElement.style.visibility = 'visible';
+            advAvatar_mainElement.style.cursor = 'pointer';
+            advAvatar_mainElement.style.transform = 'scale(1)';
+
+            advAvatar_width = advAvatar_mainElement.offsetWidth;
+            advAvatar_height = advAvatar_mainElement.offsetHeight;
+            
+            if (advAvatar_width === 0 || advAvatar_height === 0) {
+                const style = window.getComputedStyle(advAvatar_mainElement);
+                advAvatar_width = parseInt(style.width, 10) || 250; 
+                advAvatar_height = parseInt(style.height, 10) || 250;
+            }
+
+            advAvatar_posX = Math.random() * (window.innerWidth - advAvatar_width);
+            advAvatar_posY = Math.random() * (window.innerHeight - advAvatar_height);
+            advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
+            advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+            
+            advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+            advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+
+            advAvatar_speedX = (Math.random() - 0.5) * 6;
+            advAvatar_speedY = (Math.random() - 0.5) * 6;
+
+            function advAvatar_updateMainPosition() {
+                if (advAvatar_isDragging || advAvatar_isPausedByHover) {
+                    return; 
+                }
+
+                advAvatar_posX += advAvatar_speedX;
+                advAvatar_posY += advAvatar_speedY;
+
+                if (advAvatar_posX <= 0 || advAvatar_posX >= window.innerWidth - advAvatar_width) advAvatar_speedX *= -1;
+                if (advAvatar_posY <= 0 || advAvatar_posY >= window.innerHeight - advAvatar_height) advAvatar_speedY *= -1;
+
+                advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
+                advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+
+                if (advAvatar_githubDropdown) {
+                    advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
+                    advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                    advAvatar_githubDropdown.style.visibility = 'visible';
+                }
+                advAvatar_mainAnimFrameId = requestAnimationFrame(advAvatar_updateMainPosition);
+            }
+
+            advAvatar_mainAvatarMouseDownHandler = function(e) {
+                advAvatar_isDragging = true;
+                advAvatar_dragOffsetX = e.clientX - advAvatar_mainElement.getBoundingClientRect().left;
+                advAvatar_dragOffsetY = e.clientY - advAvatar_mainElement.getBoundingClientRect().top;
+                advAvatar_mainElement.style.cursor = 'grabbing';
+                advAvatar_mainElement.style.transform = 'scale(1.1)';
+
+                advAvatar_isPausedByHover = true; 
+                
+                cancelAnimationFrame(advAvatar_mainAnimFrameId); 
+                advAvatar_mainAnimFrameId = null;
+
+                clearTimeout(advAvatar_explosionTimeoutId); advAvatar_explosionTimeoutId = null;
+                clearInterval(advAvatar_duplicateIntervalId); advAvatar_duplicateIntervalId = null;
+                cancelAnimationFrame(advAvatar_duplicatesAnimFrameId); advAvatar_duplicatesAnimFrameId = null;
+
+                advAvatar_duplicatedAvatars.forEach(dupData => {
+                    dupData.element.animate([{ opacity: parseFloat(dupData.element.style.opacity) || 0.7 }, { opacity: 0 }], { duration: 300, easing: 'ease-out' })
+                        .onfinish = () => { if (dupData.element.parentNode) dupData.element.remove(); };
+                });
+                advAvatar_duplicatedAvatars = [];
+            };
+
+            advAvatar_documentMouseMoveHandler = function(e) {
+                if (!advAvatar_isDragging) return;
+                advAvatar_posX = e.clientX - advAvatar_dragOffsetX;
+                advAvatar_posY = e.clientY - advAvatar_dragOffsetY;
+                advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
+                advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+                advAvatar_mainElement.style.left = advAvatar_posX + 'px';
+                advAvatar_mainElement.style.top = advAvatar_posY + 'px';
+                if (advAvatar_githubDropdown) {
+                    advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
+                    advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                }
+            };
+
+            advAvatar_documentMouseUpHandler = function() {
+                if (advAvatar_isDragging) {
+                    advAvatar_isDragging = false;
+                    advAvatar_mainElement.style.cursor = 'pointer';
+                    advAvatar_mainElement.style.transform = 'scale(1)';
+                    advAvatar_speedX = (Math.random() - 0.5) * 8;
+                    advAvatar_speedY = (Math.random() - 0.5) * 8;
+
+                    advAvatar_isPausedByHover = false; 
+                    
+                    advAvatar_startCycle(); 
+                    
+                    cancelAnimationFrame(advAvatar_mainAnimFrameId); 
+                    advAvatar_updateMainPosition(); 
+                }
+            };
+
+            advAvatar_mainAvatarMouseEnterHandler = function() {
+                if (advAvatar_isDragging) return; 
+
+                advAvatar_isPausedByHover = true;
+                cancelAnimationFrame(advAvatar_mainAnimFrameId); 
+                advAvatar_mainAnimFrameId = null;
+
+                clearTimeout(advAvatar_explosionTimeoutId); advAvatar_explosionTimeoutId = null;
+                clearInterval(advAvatar_duplicateIntervalId); advAvatar_duplicateIntervalId = null;
+                cancelAnimationFrame(advAvatar_duplicatesAnimFrameId); advAvatar_duplicatesAnimFrameId = null;
+
+                advAvatar_duplicatedAvatars.forEach(dupData => {
+                    dupData.element.animate([{ opacity: parseFloat(dupData.element.style.opacity) || 0.7 }, { opacity: 0 }], { duration: 300, easing: 'ease-out' })
+                        .onfinish = () => { if (dupData.element.parentNode) dupData.element.remove(); };
+                });
+                advAvatar_duplicatedAvatars = [];
+            };
+
+            advAvatar_mainAvatarMouseLeaveHandler = function() {
+                if (advAvatar_isDragging) return; 
+
+                advAvatar_isPausedByHover = false;
+                
+                cancelAnimationFrame(advAvatar_mainAnimFrameId); 
+                advAvatar_updateMainPosition(); 
+
+                advAvatar_startCycle(); 
+            };
+            
+            advAvatar_windowResizeHandler = () => {
+                if (!advAvatar_mainElement) return;
+                advAvatar_width = advAvatar_mainElement.offsetWidth;
+                advAvatar_height = advAvatar_mainElement.offsetHeight;
+                advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
+                advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+
+                if (advAvatar_githubDropdown) {
+                     advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
+                     advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                }
+            };
+
+            advAvatar_mainElement.addEventListener('mousedown', advAvatar_mainAvatarMouseDownHandler);
+            document.addEventListener('mousemove', advAvatar_documentMouseMoveHandler);
+            document.addEventListener('mouseup', advAvatar_documentMouseUpHandler);
+            advAvatar_mainElement.addEventListener('mouseenter', advAvatar_mainAvatarMouseEnterHandler);
+            advAvatar_mainElement.addEventListener('mouseleave', advAvatar_mainAvatarMouseLeaveHandler);
+            window.addEventListener('resize', advAvatar_windowResizeHandler);
+
+            function advAvatar_updateDuplicatesPosition() {
+                if (advAvatar_isPausedByHover || advAvatar_duplicatedAvatars.length === 0) {
+                    cancelAnimationFrame(advAvatar_duplicatesAnimFrameId);
+                    advAvatar_duplicatesAnimFrameId = null;
+                    return;
+                }
+                
+                let hasActiveDuplicates = false;
+                advAvatar_duplicatedAvatars.forEach(dupData => {
                     dupData.x += dupData.speedX;
                     dupData.y += dupData.speedY;
 
-                    // Rebote en los bordes de la ventana para duplicados
                     if (dupData.x <= 0 || dupData.x >= window.innerWidth - dupData.element.offsetWidth) {
                         dupData.speedX *= -1;
                     }
@@ -279,61 +413,84 @@
 
                     dupData.element.style.left = `${dupData.x}px`;
                     dupData.element.style.top = `${dupData.y}px`;
+                    hasActiveDuplicates = true;
                 });
-                if (duplicatedAvatars.length > 0) requestAnimationFrame(updateDuplicatesPosition);
+
+                if (hasActiveDuplicates) {
+                    advAvatar_duplicatesAnimFrameId = requestAnimationFrame(advAvatar_updateDuplicatesPosition);
+                } else {
+                    cancelAnimationFrame(advAvatar_duplicatesAnimFrameId);
+                    advAvatar_duplicatesAnimFrameId = null;
+                }
             }
 
-            function createDuplicate() {
-                if (duplicatedAvatars.length >= maxDuplicates) {
-                    explodeAvatars();
+            function advAvatar_createDuplicate() {
+                if (advAvatar_isPausedByHover) return;
+
+                if (advAvatar_duplicatedAvatars.length >= ADVAVATAR_MAX_DUPLICATES) {
+                    advAvatar_explodeAvatars();
                     return;
                 }
+                if (!advAvatar_mainElement) return;
 
-                const duplicate = mainAvatar.cloneNode(true);
-                duplicate.id = ''; // Evitar IDs duplicados
-                duplicate.style.position = 'fixed'; // Para que se posicione relativo a la ventana
-                duplicate.style.left = mainAvatar.style.left;
-                duplicate.style.top = mainAvatar.style.top;
+                const duplicate = advAvatar_mainElement.cloneNode(true);
+                duplicate.id = ''; 
+                duplicate.style.position = 'fixed'; 
+                
+                duplicate.style.left = `${advAvatar_posX}px`;
+                duplicate.style.top = `${advAvatar_posY}px`;
                 duplicate.style.opacity = '0.7';
-                duplicate.style.transform = `scale(${1 - duplicatedAvatars.length * 0.05})`; // Más pequeñas
-                duplicate.style.zIndex = 1001 - (duplicatedAvatars.length + 1); // Detrás del original
+                duplicate.style.transform = `scale(${1 - advAvatar_duplicatedAvatars.length * 0.02})`; 
+                duplicate.style.zIndex = 1000 - (advAvatar_duplicatedAvatars.length + 1); 
                 
                 const dupData = {
                     element: duplicate,
-                    x: parseFloat(mainAvatar.style.left),
-                    y: parseFloat(mainAvatar.style.top),
-                    speedX: (Math.random() - 0.5) * 4, // Velocidad aleatoria para el duplicado
-                    speedY: (Math.random() - 0.5) * 4  // Velocidad aleatoria para el duplicado
+                    x: advAvatar_posX,
+                    y: advAvatar_posY,
+                    speedX: (Math.random() - 0.5) * 4, 
+                    speedY: (Math.random() - 0.5) * 4  
                 };
 
-                document.body.appendChild(duplicate); // Añadir al body para movimiento global
-                duplicatedAvatars.push(dupData);
+                document.body.appendChild(duplicate); 
+                advAvatar_duplicatedAvatars.push(dupData);
 
-                // Iniciar animación de duplicados si es el primero
-                if (duplicatedAvatars.length === 1) {
-                    updateDuplicatesPosition();
+                if (advAvatar_duplicatedAvatars.length === 1 && !advAvatar_duplicatesAnimFrameId) { 
+                    cancelAnimationFrame(advAvatar_duplicatesAnimFrameId); 
+                    advAvatar_updateDuplicatesPosition();
                 }
             }
 
-            function explodeAvatars() {
-                clearInterval(duplicateInterval);
-                duplicatedAvatars.forEach(dupData => {
-                    // Animación de explosión simple: se dispersan y desaparecen
+            function advAvatar_explodeAvatars() {
+                clearInterval(advAvatar_duplicateIntervalId); advAvatar_duplicateIntervalId = null;
+                advAvatar_duplicatedAvatars.forEach(dupData => {
                     dupData.element.animate([
-                        { transform: dupData.element.style.transform + ' translate(0,0) scale(1)', opacity: 0.7 },
+                        { transform: dupData.element.style.transform + ' translate(0,0)', opacity: parseFloat(dupData.element.style.opacity) || 0.7 },
                         { transform: dupData.element.style.transform + ` translate(${(Math.random()-0.5)*200}px, ${(Math.random()-0.5)*200}px) scale(0)`, opacity: 0 }
-                    ], { duration: 588, easing: 'ease-out' }).onfinish = () => dupData.element.remove();
+                    ], { duration: 588, easing: 'ease-out' }).onfinish = () => {
+                         if(dupData.element.parentNode) dupData.element.remove();
+                    };
                 });
-                duplicatedAvatars = [];
-                explosionTimeout = setTimeout(startCycle, 882); // Espera reducida (1500 / 1.7)
+                advAvatar_duplicatedAvatars = [];
+                if (!advAvatar_isPausedByHover) { 
+                    advAvatar_explosionTimeoutId = setTimeout(advAvatar_startCycle, 882);
+                }
             }
 
-            function startCycle() {
-                clearTimeout(explosionTimeout);
-                mainAvatar.style.opacity = '1'; // Asegurar que el principal sea visible
-                duplicateInterval = setInterval(createDuplicate, 2000); // Duplicar cada 2 segundos
+            function advAvatar_startCycle() {
+                if (advAvatar_isPausedByHover) return; 
+
+                clearTimeout(advAvatar_explosionTimeoutId); advAvatar_explosionTimeoutId = null;
+                clearInterval(advAvatar_duplicateIntervalId); 
+                
+                if (advAvatar_mainElement) advAvatar_mainElement.style.opacity = '1';
+                
+                if (advAvatar_mainElement && !advAvatar_isPausedByHover) { 
+                     advAvatar_duplicateIntervalId = setInterval(advAvatar_createDuplicate, 2000);
+                }
             }
-            startCycle(); // Iniciar el ciclo
+
+            advAvatar_updateMainPosition();
+            advAvatar_startCycle();
         }
         // --- FIN NUEVA ANIMACIÓN AVANZADA DEL AVATAR ---
 
