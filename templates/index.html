@@ -7,16 +7,16 @@
     <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenid@ a mi Web</h1>
         
     <!-- Contenedor para la imagen y el botón desplegable de GitHub -->
-    <div class="d-flex justify-content-center align-items-center mb-5" style="position: relative; height: 300px;">
-        <!-- Imagen con movimiento Arkanoid -->
+    <div class="d-flex justify-content-center align-items-center mb-5" style="position: relative; height: 500px;">
+        <!-- Imagen con movimiento Arkanoid (150% más grande: 375px) -->
         <img id="arkanoid-avatar" 
              src="{{ url_for('static', filename='img/1(11).png') }}" 
              alt="Aupachus" 
              class="img-fluid rounded-circle" 
-             style="position: absolute; width: 100px; height: 100px; cursor: pointer; z-index: 1;"
+             style="position: absolute; width: 375px; height: 375px; cursor: pointer; z-index: 1;"
              loading="lazy">
         
-        <!-- Botón Desplegable de GitHub (se mantiene en su posición) -->
+        <!-- Botón Desplegable de GitHub -->
         <div class="dropdown" style="position: relative; z-index: 2;">
             <button class="btn btn-lg btn-secondary dropdown-toggle" type="button" id="githubDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Github
@@ -87,7 +87,7 @@
     </div>
     
     <script>
-        // Función para animar texto (que faltaba en el original)
+        // Función para animar texto
         function animateTextFlyOut(text, element) {
             if (!text || !element) return;
             
@@ -117,13 +117,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuración del movimiento Arkanoid para la imagen
+            // Configuración del movimiento Arkanoid para la imagen (150% más grande)
             const avatar = document.getElementById('arkanoid-avatar');
             const container = avatar.parentElement;
-            let posX = Math.random() * (container.clientWidth - 100);
-            let posY = Math.random() * (container.clientHeight - 100);
-            let speedX = (Math.random() - 0.5) * 8;
-            let speedY = (Math.random() - 0.5) * 8;
+            const avatarSize = 375; // 150% más grande que 250px
+            let posX = Math.random() * (container.clientWidth - avatarSize);
+            let posY = Math.random() * (container.clientHeight - avatarSize);
+            let speedX = (Math.random() - 0.5) * 6;
+            let speedY = (Math.random() - 0.5) * 6;
             let isDragging = false;
             let dragOffsetX = 0;
             let dragOffsetY = 0;
@@ -136,14 +137,14 @@
                 posY += speedY;
                 
                 // Detección de colisiones con los bordes
-                if (posX <= 0 || posX >= container.clientWidth - 100) {
-                    speedX = -speedX * 1.05; // Aumentar velocidad ligeramente
-                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                if (posX <= 0 || posX >= container.clientWidth - avatarSize) {
+                    speedX = -speedX * 1.02; // Aumentar velocidad ligeramente
+                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(1.1)`;
                 }
                 
-                if (posY <= 0 || posY >= container.clientHeight - 100) {
-                    speedY = -speedY * 1.05;
-                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+                if (posY <= 0 || posY >= container.clientHeight - avatarSize) {
+                    speedY = -speedY * 1.02;
+                    avatar.style.filter = `hue-rotate(${Math.random() * 360}deg) brightness(1.1)`;
                 }
                 
                 // Aplicar posición
@@ -159,7 +160,8 @@
                 dragOffsetX = e.clientX - posX - container.getBoundingClientRect().left;
                 dragOffsetY = e.clientY - posY - container.getBoundingClientRect().top;
                 avatar.style.cursor = 'grabbing';
-                avatar.style.transform = 'scale(1.1)';
+                avatar.style.transform = 'scale(1.05)';
+                avatar.style.boxShadow = '0 0 20px rgba(0, 0, 255, 0.7)';
             });
             
             document.addEventListener('mousemove', function(e) {
@@ -169,8 +171,8 @@
                 posY = e.clientY - container.getBoundingClientRect().top - dragOffsetY;
                 
                 // Limitar a los bordes
-                posX = Math.max(0, Math.min(posX, container.clientWidth - 100));
-                posY = Math.max(0, Math.min(posY, container.clientHeight - 100));
+                posX = Math.max(0, Math.min(posX, container.clientWidth - avatarSize));
+                posY = Math.max(0, Math.min(posY, container.clientHeight - avatarSize));
                 
                 avatar.style.left = posX + 'px';
                 avatar.style.top = posY + 'px';
@@ -181,9 +183,10 @@
                     isDragging = false;
                     avatar.style.cursor = 'pointer';
                     avatar.style.transform = 'scale(1)';
+                    avatar.style.boxShadow = 'none';
                     // Cambiar dirección al soltar
-                    speedX = (Math.random() - 0.5) * 8;
-                    speedY = (Math.random() - 0.5) * 8;
+                    speedX = (Math.random() - 0.5) * 6;
+                    speedY = (Math.random() - 0.5) * 6;
                     updatePosition();
                 }
             });
@@ -317,6 +320,53 @@
                     mailBtn.textContent = buttonTranslations[currentLanguageIndex];
                 }, 3000);
             }
+
+            // Controlador del reproductor de música (simplificado)
+            const audioPlayer = new Audio();
+            let currentTrackIndex = 0;
+            const tracks = [
+                {% if music_tracks %}
+                    {% for track in music_tracks %}
+                        { name: "{{ track.name }}", url: "{{ url_for('static', filename='music/' + track.file) }}" },
+                    {% endfor %}
+                {% endif %}
+            ];
+
+            document.getElementById('playButton').addEventListener('click', function() {
+                if (tracks.length > 0) {
+                    audioPlayer.src = tracks[currentTrackIndex].url;
+                    audioPlayer.play();
+                }
+            });
+
+            document.getElementById('stopButton').addEventListener('click', function() {
+                audioPlayer.pause();
+                audioPlayer.currentTime = 0;
+            });
+
+            document.getElementById('prevButton').addEventListener('click', function() {
+                currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+                document.getElementById('trackSelector').selectedIndex = currentTrackIndex;
+                audioPlayer.src = tracks[currentTrackIndex].url;
+                audioPlayer.play();
+            });
+
+            document.getElementById('nextButton').addEventListener('click', function() {
+                currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+                document.getElementById('trackSelector').selectedIndex = currentTrackIndex;
+                audioPlayer.src = tracks[currentTrackIndex].url;
+                audioPlayer.play();
+            });
+
+            document.getElementById('trackSelector').addEventListener('change', function() {
+                currentTrackIndex = this.selectedIndex;
+                audioPlayer.src = tracks[currentTrackIndex].url;
+                audioPlayer.play();
+            });
+
+            document.getElementById('volumeControl').addEventListener('input', function() {
+                audioPlayer.volume = this.value;
+            });
         });
     </script>
 
