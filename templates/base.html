@@ -95,6 +95,36 @@
                 <img alt="" border="0" src="https://www.paypal.com/es_ES/i/scr/pixel.gif" width="1" height="1" />
             </form>
         </div>
+    </div> <!-- Fin de avatar-animation-container -->
+
+    <!-- Nuevo cuadro interactivo -->
+    <div id="interactive-message-box"
+         style="position: fixed;
+                top: 460px; /* Ajustar según sea necesario, debajo del avatar y sus botones */
+                right: 20px;
+                width: 230px; /* Ancho del cuadro */
+                min-height: 120px; /* Altura mínima del cuadro */
+                padding: 15px;
+                border: 3px solid #FF00FF; /* Color inicial del borde, animará */
+                border-radius: 10px;
+                z-index: 999; /* Ligeramente por debajo del avatar y sus elementos */
+                background-size: cover;
+                background-position: center;
+                text-align: center;
+                cursor: pointer;
+                box-shadow: 0 0 15px rgba(50,50,50,0.7);
+                display: flex; /* Para centrar el texto verticalmente */
+                justify-content: center; /* Centrado horizontal */
+                align-items: center; /* Centrado vertical */
+                color: white; /* Color de texto por defecto */">
+        <p id="interactive-box-text"
+           style="font-size: 1.15em; /* Tamaño del texto */
+                  font-weight: bold;
+                  margin: 0;
+                  text-shadow: 0 0 6px black, 0 0 10px black, 0 0 15px black; /* Sombra para efecto luminoso */
+                  transition: color 0.4s ease-in-out;">
+            Si me tocas me paro ^^
+        </p>
     </div>
 
     <!-- Contenido principal -->
@@ -119,6 +149,7 @@
                 "{{ url_for('static', filename=(gallery_img_folder_for_url + '/' + image_filename)) }}"{%- if not loop.last -%},{%- endif -%}
             {%- endfor -%}
         ];
+        const CURRENT_PAGE_ENDPOINT = "{{ current_endpoint }}";
     </script>
     <!-- Scripts personalizados -->
     <script src="{{ url_for('static', filename='js/dynamicBackground.js') }}"></script> <!-- Nuevo script para fondo -->
@@ -234,12 +265,13 @@
             advAvatar_isDragging = false;
         }
 
-        function advancedAvatarAnimation() {
+        // Esta función ahora actúa como un despachador para el tipo de animación
+        function startAvatarAnimationSystem() {
             advAvatar_cleanupPreviousAnimation(); 
 
-            advAvatar_mainElement = document.getElementById('arkanoid-avatar');
-            advAvatar_githubDropdown = document.getElementById('github-dropdown-container');
-            advAvatar_donationsButton = document.getElementById('donations-button-container');
+            advAvatar_mainElement = document.getElementById('arkanoid-avatar'); // Ya se obtiene en cleanup o aquí
+            advAvatar_githubDropdown = document.getElementById('github-dropdown-container'); // Ya se obtiene en cleanup o aquí
+            advAvatar_donationsButton = document.getElementById('donations-button-container'); // Ya se obtiene en cleanup o aquí
 
             if (!advAvatar_mainElement) {
                 return;
@@ -248,6 +280,102 @@
             advAvatar_mainElement.style.visibility = 'visible';
             advAvatar_mainElement.style.cursor = 'pointer';
             advAvatar_mainElement.style.transform = 'scale(1)';
+
+            if (CURRENT_PAGE_ENDPOINT === 'ver_pdfs') {
+                setupSimpleVerticalBounceAnimation();
+            } else {
+                setupComplexArkanoidAnimation();
+            }
+        }
+
+        // Función para la animación simple de rebote vertical
+        function setupSimpleVerticalBounceAnimation() {
+            // Asegurar que los elementos estén referenciados
+            advAvatar_mainElement = advAvatar_mainElement || document.getElementById('arkanoid-avatar');
+            advAvatar_githubDropdown = advAvatar_githubDropdown || document.getElementById('github-dropdown-container');
+            advAvatar_donationsButton = advAvatar_donationsButton || document.getElementById('donations-button-container');
+
+            if (!advAvatar_mainElement) return;
+
+            advAvatar_width = advAvatar_mainElement.offsetWidth;
+            advAvatar_height = advAvatar_mainElement.offsetHeight;
+            
+            if (advAvatar_width === 0 || advAvatar_height === 0) {
+                const style = window.getComputedStyle(advAvatar_mainElement);
+                advAvatar_width = parseInt(style.width, 10) || 250; 
+                advAvatar_height = parseInt(style.height, 10) || 250;
+            }
+
+            // Posición fija a la derecha
+            advAvatar_posX = window.innerWidth - advAvatar_width - 30; // 30px de margen desde el borde derecho
+            advAvatar_posY = Math.random() * (window.innerHeight - advAvatar_height);
+            advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+            
+            advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+            advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+
+            advAvatar_speedX = 0; // No hay movimiento horizontal
+            advAvatar_speedY = 2.5; // Velocidad vertical (ajusta según prefieras)
+
+            // Definir manejadores de eventos para este modo (solo hover y resize)
+            advAvatar_mainAvatarMouseEnterHandler = function() {
+                advAvatar_isPausedByHover = true;
+                cancelAnimationFrame(advAvatar_mainAnimFrameId);
+                advAvatar_mainAnimFrameId = null;
+            };
+
+            advAvatar_mainAvatarMouseLeaveHandler = function() {
+                advAvatar_isPausedByHover = false;
+                if (!advAvatar_mainAnimFrameId) {
+                    advAvatar_updateSimpleVerticalPosition();
+                }
+            };
+            
+            advAvatar_windowResizeHandler = function() {
+                if (!advAvatar_mainElement) return;
+                advAvatar_width = advAvatar_mainElement.offsetWidth;
+                advAvatar_height = advAvatar_mainElement.offsetHeight;
+                advAvatar_posX = window.innerWidth - advAvatar_width - 30; // Mantener a la derecha
+                advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
+                
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+                positionAccessoryElements(); // Re-posicionar botones accesorios
+            };
+
+            advAvatar_mainElement.addEventListener('mouseenter', advAvatar_mainAvatarMouseEnterHandler);
+            advAvatar_mainElement.addEventListener('mouseleave', advAvatar_mainAvatarMouseLeaveHandler);
+            window.addEventListener('resize', advAvatar_windowResizeHandler);
+
+            advAvatar_updateSimpleVerticalPosition(); // Iniciar el bucle de animación simple
+        }
+
+        function advAvatar_updateSimpleVerticalPosition() {
+            if (advAvatar_isPausedByHover || !advAvatar_mainElement) return;
+
+            advAvatar_posY += advAvatar_speedY;
+
+            if (advAvatar_posY <= 0 || advAvatar_posY >= window.innerHeight - advAvatar_height) {
+                advAvatar_speedY *= -1;
+                advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height)); // Clamp
+            }
+
+            advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+            // X es fijo, pero lo reaplicamos por si acaso (aunque el resize lo maneja)
+            advAvatar_mainElement.style.left = `${advAvatar_posX}px`; 
+
+            positionAccessoryElements();
+            advAvatar_mainAnimFrameId = requestAnimationFrame(advAvatar_updateSimpleVerticalPosition);
+        }
+
+        // Función para la animación compleja original
+        function setupComplexArkanoidAnimation() {
+            // Asegurar que los elementos estén referenciados
+            advAvatar_mainElement = advAvatar_mainElement || document.getElementById('arkanoid-avatar');
+            advAvatar_githubDropdown = advAvatar_githubDropdown || document.getElementById('github-dropdown-container');
+            advAvatar_donationsButton = advAvatar_donationsButton || document.getElementById('donations-button-container');
+
+            if (!advAvatar_mainElement) return;
 
             advAvatar_width = advAvatar_mainElement.offsetWidth;
             advAvatar_height = advAvatar_mainElement.offsetHeight;
@@ -283,24 +411,9 @@
                 advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
                 advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
 
-                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
-                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
-
-                if (advAvatar_githubDropdown) {
-                    advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
-                    advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
-                    advAvatar_githubDropdown.style.visibility = 'visible';
-                }
-                if (advAvatar_donationsButton) {
-                    let githubDropdownHeight = 0;
-                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
-                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
-                    }
-                    const marginTop = githubDropdownHeight > 0 ? 5 : 0; // 5px de margen solo si el dropdown de GitHub es visible y tiene altura
-                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
-                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
-                    advAvatar_donationsButton.style.visibility = 'visible';
-                }
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`; // Aplicar posición
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;  // Aplicar posición
+                positionAccessoryElements(); // Posicionar botones accesorios
                 advAvatar_mainAnimFrameId = requestAnimationFrame(advAvatar_updateMainPosition);
             }
 
@@ -333,21 +446,9 @@
                 advAvatar_posY = e.clientY - advAvatar_dragOffsetY;
                 advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
                 advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
-                advAvatar_mainElement.style.left = advAvatar_posX + 'px';
-                advAvatar_mainElement.style.top = advAvatar_posY + 'px';
-                if (advAvatar_githubDropdown) {
-                    advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
-                    advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
-                }
-                if (advAvatar_donationsButton) {
-                    let githubDropdownHeight = 0;
-                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
-                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
-                    }
-                    const marginTop = githubDropdownHeight > 0 ? 5 : 0;
-                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
-                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
-                }
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
+                positionAccessoryElements(); // Re-posicionar botones accesorios
             };
 
             advAvatar_documentMouseUpHandler = function() {
@@ -402,22 +503,9 @@
                 advAvatar_height = advAvatar_mainElement.offsetHeight;
                 advAvatar_posX = Math.max(0, Math.min(advAvatar_posX, window.innerWidth - advAvatar_width));
                 advAvatar_posY = Math.max(0, Math.min(advAvatar_posY, window.innerHeight - advAvatar_height));
-                advAvatar_mainElement.style.left = `${advAvatar_posX}px`;
-                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;
-
-                if (advAvatar_githubDropdown) {
-                     advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
-                     advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
-                }
-                if (advAvatar_donationsButton) {
-                    let githubDropdownHeight = 0;
-                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
-                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
-                    }
-                    const marginTop = githubDropdownHeight > 0 ? 5 : 0;
-                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
-                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
-                }
+                advAvatar_mainElement.style.left = `${advAvatar_posX}px`; // Aplicar posición
+                advAvatar_mainElement.style.top = `${advAvatar_posY}px`;  // Aplicar posición
+                positionAccessoryElements(); // Re-posicionar botones accesorios
             };
 
             advAvatar_mainElement.addEventListener('mousedown', advAvatar_mainAvatarMouseDownHandler);
@@ -530,7 +618,27 @@
             advAvatar_updateMainPosition();
             advAvatar_startCycle();
         }
-        // --- FIN NUEVA ANIMACIÓN AVANZADA DEL AVATAR ---
+
+        // Función auxiliar para posicionar los botones de GitHub y Donaciones
+        function positionAccessoryElements() {
+            if (!advAvatar_mainElement) return; // Asegurarse de que el elemento principal existe
+
+            if (advAvatar_githubDropdown) {
+                advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
+                advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                advAvatar_githubDropdown.style.visibility = 'visible';
+            }
+            if (advAvatar_donationsButton) {
+                let githubDropdownHeight = 0;
+                if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
+                    githubDropdownHeight = advAvatar_githubDropdown.offsetHeight || 0; // Usar 0 si offsetHeight no está disponible
+                }
+                const marginTop = githubDropdownHeight > 0 ? 5 : 0;
+                advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
+                advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
+                advAvatar_donationsButton.style.visibility = 'visible';
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             const navBarLinks = document.querySelectorAll('.navbar-nav .nav-link');
@@ -551,8 +659,99 @@
             }
 
             // Iniciar la nueva animación del avatar
-            advancedAvatarAnimation();
+            startAvatarAnimationSystem(); // Llamar al nuevo despachador de animación
 
+            // --- Cuadro Interactivo con Mensaje ---
+            const interactiveBox = document.getElementById('interactive-message-box');
+            const interactiveBoxTextElement = document.getElementById('interactive-box-text');
+
+            if (interactiveBox && interactiveBoxTextElement) {
+                // Establecer imagen de fondo
+                try {
+                    const imageUrl = "{{ url_for('static', filename='img/imagen(1).jpg') }}";
+                    // Comprobar si url_for generó una URL válida
+                    if (imageUrl && !imageUrl.endsWith('/static/img/')) { // Evita URL base vacía
+                        interactiveBox.style.backgroundImage = `url("${imageUrl}")`;
+                    } else {
+                        console.warn("La imagen de fondo para el cuadro interactivo ('imagen(1).jpg') no se encontró o la URL es incorrecta. Usando color de fondo de respaldo.", imageUrl);
+                        interactiveBox.style.backgroundColor = '#2c3e50'; // Color de respaldo oscuro
+                    }
+                } catch (e) {
+                    console.error("Error al establecer la imagen de fondo para el cuadro interactivo:", e);
+                    interactiveBox.style.backgroundColor = '#34495e'; // Color de respaldo oscuro alternativo
+                }
+
+                const luminousTextColors = ['#FF00FF', '#00FFFF', '#ADFF2F', '#FFD700', '#FF69B4', '#7FFF00', '#00FF7F', '#FF4500', '#DA70D6', '#39FF14'];
+                const luminousBorderColors = ['#00FFFF', '#FF00FF', '#FFFF00', '#FF69B4', '#7FFF00', '#FFD700', '#00FF00', '#FF8C00', '#BA55D3', '#1F51FF'];
+                let colorIndex = 0;
+                let textAnimationInterval;
+                let languageChangeInterval;
+
+                const interactiveBoxTranslations = [
+                    { lang: 'es', text: "Si me tocas me paro ^^" }, // Español
+                    { lang: 'en', text: "If you touch me, I stop ^^" }, // Inglés
+                    { lang: 'eu', text: "Ukitzen banauzu, gelditzen naiz ^^" }, // Euskera
+                    { lang: 'fr', text: "Si tu me touches, je m'arrête ^^" }, // Francés
+                    { lang: 'de', text: "Wenn du mich berührst, halte ich an ^^" }, // Alemán
+                    { lang: 'it', text: "Se mi tocchi, mi fermo ^^" }, // Italiano
+                    { lang: 'ru', text: "Если ты меня тронешь, я остановлюсь ^^" }, // Ruso
+                    { lang: 'ja', text: "私に触ると止まります ^^" }, // Japonés
+                    { lang: 'zh', text: "如果你碰我，我会停下来 ^^" }  // Chino
+                ];
+                let currentLanguageIndex = 0;
+
+                function animateInteractiveBoxColors() {
+                    if (interactiveBoxTextElement && interactiveBox) {
+                        interactiveBoxTextElement.style.color = luminousTextColors[colorIndex];
+                        interactiveBox.style.borderColor = luminousBorderColors[(colorIndex + luminousTextColors.length/2) % luminousBorderColors.length]; // Desfase para el borde
+                        colorIndex = (colorIndex + 1) % luminousTextColors.length;
+                    } else {
+                        clearInterval(textAnimationInterval); // Si los elementos no existen, detener
+                    }
+                }
+
+                function changeInteractiveBoxLanguage() {
+                    if (interactiveBoxTextElement) {
+                        currentLanguageIndex = (currentLanguageIndex + 1) % interactiveBoxTranslations.length;
+                        interactiveBoxTextElement.textContent = interactiveBoxTranslations[currentLanguageIndex].text;
+                    } else {
+                        clearInterval(languageChangeInterval); // Si el elemento no existe, detener
+                    }
+                }
+
+                if (document.body.contains(interactiveBox) && document.body.contains(interactiveBoxTextElement)) {
+                    interactiveBoxTextElement.textContent = interactiveBoxTranslations[currentLanguageIndex].text; // Set initial text
+                    textAnimationInterval = setInterval(animateInteractiveBoxColors, 650); // Intervalo de cambio de color
+                    languageChangeInterval = setInterval(changeInteractiveBoxLanguage, 2000); // Intervalo de cambio de idioma
+
+                }
+
+                const handleBoxClick = function() {
+                    // Detener y limpiar la animación del avatar
+                    if (typeof advAvatar_cleanupPreviousAnimation === 'function') {
+                        advAvatar_cleanupPreviousAnimation();
+                    }
+
+                    // Asegurar que el avatar principal quede visualmente inactivo
+                    if (typeof advAvatar_mainElement !== 'undefined' && advAvatar_mainElement) {
+                        advAvatar_mainElement.style.opacity = '0.5';
+                        advAvatar_mainElement.style.cursor = 'default';
+                        if (typeof advAvatar_githubDropdown !== 'undefined' && advAvatar_githubDropdown) advAvatar_githubDropdown.style.visibility = 'hidden';
+                        if (typeof advAvatar_donationsButton !== 'undefined' && advAvatar_donationsButton) advAvatar_donationsButton.style.visibility = 'hidden';
+                    }
+
+                    interactiveBoxTextElement.textContent = "¡Avatar detenido! ^^"; // Mensaje final (podría ser traducido también si se desea)
+                    interactiveBox.style.cursor = 'default';
+                    clearInterval(textAnimationInterval); // Detener animación de color del cuadro
+                    clearInterval(languageChangeInterval); // Detener cambio de idioma
+                    interactiveBoxTextElement.style.color = '#E0E0E0'; // Color final del texto
+                    interactiveBox.style.borderColor = '#888888'; // Color final del borde
+                    interactiveBox.style.boxShadow = '0 0 8px rgba(0,0,0,0.4)'; // Sombra más tenue
+
+                    interactiveBox.removeEventListener('click', handleBoxClick); // Hacer que la acción sea de un solo uso
+                };
+                interactiveBox.addEventListener('click', handleBoxClick);
+            }
             // Efecto de explosión de letras al pasar el ratón sobre elementos de texto elegibles
             const hoverAnimatedElementsCooldown = new Set(); // Para el enfriamiento
 
