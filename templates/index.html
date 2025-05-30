@@ -317,8 +317,54 @@
                     mailBtn.textContent = buttonTranslations[currentLanguageIndex];
                 }, 3000);
             }
+
+            // --- NEW CODE FOR LEARNING BUTTONS ---
+            const learningButtons = document.querySelectorAll('.learning-btn');
+            learningButtons.forEach(button => {
+                const originalText = button.textContent.trim();
+                let isAnimating = false; // Flag to prevent re-triggering animation
+
+                button.addEventListener('mouseover', function() {
+                    if (isAnimating || !originalText) {
+                        return; // Don't animate if already animating or no text
+                    }
+                    isAnimating = true;
+                    
+                    // Call the existing animation function
+                    // 'this' refers to the button element (the <a> tag)
+                    animateTextFlyOut(originalText, this);
+
+                    // Set a timeout to reset the isAnimating flag
+                    // This duration should match or slightly exceed the text restoration timeout in animateTextFlyOut
+                    setTimeout(() => {
+                        isAnimating = false;
+                        // animateTextFlyOut should restore the text.
+                        // If for some reason it didn't, or if the button had complex HTML,
+                        // you might need to manually restore it here.
+                        // For simple text buttons, animateTextFlyOut's restoration is usually sufficient.
+                    }, (originalText.length * 100) + 1000 + 200); // Duration from animateTextFlyOut + 200ms buffer
+                });
+            });
+            // --- END OF NEW CODE FOR LEARNING BUTTONS ---
         });
     </script>
+
+    <!-- Sección de botones de aprendizaje -->
+    <div class="text-center mt-5" id="learning-resources-buttons">
+        <h3 class="text-center my-4">Recursos de Aprendizaje</h3>
+        <a href="https://docs.python.org/es/3/tutorial/" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-primary m-2 learning-btn" style="border-width: 3px;">Aprende python 1</a>
+        <a href="https://greenteapress.com/wp/think-python-2e/" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-success m-2 learning-btn" style="border-width: 3px;">Aprende python 2</a>
+        <a href="https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-fall-2011/pages/lecture-notes/" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-info m-2 learning-btn" style="border-width: 3px;">Algoritmos</a>
+        <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-warning m-2 learning-btn" style="border-width: 3px;">Flask</a>
+        <a href="https://getbootstrap.com/docs/5.1/getting-started/introduction/" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-danger m-2 learning-btn" style="border-width: 3px;">Bootstrap</a>
+        <a href="https://jakevdp.github.io/PythonDataScienceHandbook/" target="_blank" rel="noopener noreferrer"
+           class="btn btn-lg btn-outline-dark m-2 learning-btn" style="border-width: 3px;">Python data science</a>
+    </div>
 
     <div class="text-center mt-4">
         <a href="{{ url_for('social') }}" class="btn btn-info">Explorar IA y Redes Sociales</a>
