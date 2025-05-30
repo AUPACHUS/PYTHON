@@ -93,7 +93,7 @@
     </div>
 
     <div class="text-center mt-3 mb-5">
-        <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+        <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg">
             <i class="fas fa-home me-2"></i>Volver al Inicio
         </a>
     </div>
@@ -145,10 +145,11 @@ document.addEventListener('DOMContentLoaded', function() {
             window.animateTextFlyOut(originalText, textElement); 
 
             // Reset the isAnimating flag after the animation duration
-            // Duration from animateTextFlyOut (text.length * 100 + 1000) + buffer
+            // The global animateTextFlyOut in base.html has a duration between 1.8s and 3s.
+            // We use the maximum possible duration (3000ms) plus a small buffer.
             setTimeout(() => {
                 isAnimating = false;
-            }, (originalText.length * 100) + 1000 + 200); 
+            }, 3000 + 200); // Max animation duration (3000ms) + 200ms buffer
         });
     });
 

@@ -245,3 +245,37 @@ a:hover {
   z-index: -1;
   transition: opacity 0.5s ease-in-out; /* ¡Aquí está! */
 }
+/* En static/css/style.css */
+.btn-outline-purple {
+    --bs-btn-color: #6f42c1; /* Color de Twitch o el que prefieras */
+    --bs-btn-border-color: #6f42c1;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #6f42c1;
+    --bs-btn-hover-border-color: #6f42c1;
+    --bs-btn-focus-shadow-rgb: 111, 66, 193;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #6f42c1;
+    --bs-btn-active-border-color: #6f42c1;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #6f42c1;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #6f42c1;
+    --bs-gradient: none;
+}
+
+.btn-outline-indigo {
+    --bs-btn-color: #5865F2; /* Color de Discord o el que prefieras */
+    --bs-btn-border-color: #5865F2;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #5865F2;
+    --bs-btn-hover-border-color: #5865F2;
+    --bs-btn-focus-shadow-rgb: 88, 101, 242;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #5865F2;
+    --bs-btn-active-border-color: #5865F2;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #5865F2;
+    --bs-btn-disabled-bg: transparent;
+    --bs-btn-disabled-border-color: #5865F2;
+    --bs-gradient: none;
+}
