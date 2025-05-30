@@ -86,6 +86,15 @@
                 <li><a class="dropdown-item" href="https://aupachus.github.io/RUTAS-PAIS-VASCO/" target="_blank" rel="noopener noreferrer">Rutas-pais-vasco</a></li>
             </ul>
         </div>
+
+        <!-- BOTÓN DE DONACIONES PAYPAL -->
+        <div id="donations-button-container" style="position: fixed; z-index: 1002; visibility: hidden; text-align: center;">
+            <form action="https://www.paypal.com/donate" method="post" target="_top">
+                <input type="hidden" name="hosted_button_id" value="V8DHJUCE86P88" />
+                <input type="image" src="https://www.paypalobjects.com/es_ES/ES/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Botón&nbsp;Donar con PayPal" />
+                <img alt="" border="0" src="https://www.paypal.com/es_ES/i/scr/pixel.gif" width="1" height="1" />
+            </form>
+        </div>
     </div>
 
     <!-- Contenido principal -->
@@ -184,7 +193,7 @@
         let advAvatar_windowResizeHandler;
 
         // Animation state variables
-        let advAvatar_mainElement, advAvatar_githubDropdown;
+        let advAvatar_mainElement, advAvatar_githubDropdown, advAvatar_donationsButton;
         let advAvatar_duplicatedAvatars = []; // Array of {element, x, y, speedX, speedY}
         let advAvatar_duplicateIntervalId, advAvatar_explosionTimeoutId;
         let advAvatar_mainAnimFrameId, advAvatar_duplicatesAnimFrameId;
@@ -230,6 +239,7 @@
 
             advAvatar_mainElement = document.getElementById('arkanoid-avatar');
             advAvatar_githubDropdown = document.getElementById('github-dropdown-container');
+            advAvatar_donationsButton = document.getElementById('donations-button-container');
 
             if (!advAvatar_mainElement) {
                 return;
@@ -281,6 +291,16 @@
                     advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
                     advAvatar_githubDropdown.style.visibility = 'visible';
                 }
+                if (advAvatar_donationsButton) {
+                    let githubDropdownHeight = 0;
+                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
+                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
+                    }
+                    const marginTop = githubDropdownHeight > 0 ? 5 : 0; // 5px de margen solo si el dropdown de GitHub es visible y tiene altura
+                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
+                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
+                    advAvatar_donationsButton.style.visibility = 'visible';
+                }
                 advAvatar_mainAnimFrameId = requestAnimationFrame(advAvatar_updateMainPosition);
             }
 
@@ -318,6 +338,15 @@
                 if (advAvatar_githubDropdown) {
                     advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
                     advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                }
+                if (advAvatar_donationsButton) {
+                    let githubDropdownHeight = 0;
+                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
+                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
+                    }
+                    const marginTop = githubDropdownHeight > 0 ? 5 : 0;
+                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
+                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
                 }
             };
 
@@ -379,6 +408,15 @@
                 if (advAvatar_githubDropdown) {
                      advAvatar_githubDropdown.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_githubDropdown.offsetWidth / 2}px`;
                      advAvatar_githubDropdown.style.top = `${advAvatar_posY + advAvatar_height}px`;
+                }
+                if (advAvatar_donationsButton) {
+                    let githubDropdownHeight = 0;
+                    if (advAvatar_githubDropdown && advAvatar_githubDropdown.style.visibility !== 'hidden') {
+                        githubDropdownHeight = advAvatar_githubDropdown.offsetHeight;
+                    }
+                    const marginTop = githubDropdownHeight > 0 ? 5 : 0;
+                    advAvatar_donationsButton.style.left = `${advAvatar_posX + advAvatar_width / 2 - advAvatar_donationsButton.offsetWidth / 2}px`;
+                    advAvatar_donationsButton.style.top = `${advAvatar_posY + advAvatar_height + githubDropdownHeight + marginTop}px`;
                 }
             };
 
