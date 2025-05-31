@@ -1,8 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Redes Sociales{% endblock %}
+{% block title %}Redes Sociales, Medios y Enlaces Útiles{% endblock %}
 
 {% block content %}
+<div class="container mt-5">
+    <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 3.5rem;">Más Enlaces y Medios</h1>
+
+    <div class="row justify-content-center text-center mb-5">
+        <div class="col-lg-6 col-md-8">
+            <a href="https://tv.garden/" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-100 d-block mb-3">
+                TV Garden
+            </a>
+            <a href="https://photocall.site/" target="_blank" rel="noopener noreferrer" class="btn btn-info btn-lg w-100 d-block">
+                Photocall TV
+            </a>
+        </div>
+    </div>
+
+    <h2 class="text-center mb-4" style="font-size: 2.5rem;">Emisoras de Radio (Noticias)</h2>
+    <p class="text-center mb-4 text-readable">
+        Escucha las últimas noticias en directo.
+        <br>
+        <small>Fuente de emisoras: <a href="https://emisora.org.es/genero/noticias/" target="_blank" rel="noopener noreferrer" class="text-muted">emisora.org.es</a></small>
+        <br>
+        <small class="text-danger"><strong>Nota:</strong> La disponibilidad y funcionalidad de las emisoras dependen de los proveedores de streaming y la compatibilidad de tu navegador.</small>
+    </p>
+
+    <div class="row text-center">
+        <!-- Botones de Emisoras de Radio -->
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://emisora.org.es/genero/noticias/#rne" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">RNE Radio Nacional</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://cadenaser.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Cadena SER</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://emisora.org.es/genero/noticias/#radio-5" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Radio 5 RNE</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://emisora.org.es/genero/noticias/#onda-cero" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Onda Cero</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://emisora.org.es/genero/noticias/#marca" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Radio Marca</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://emisora.org.es/#rock-fm" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Rock FM</a>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <a href="https://los40.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Los 40</a>
+        </div>
+    </div>
+</div>
+
+<hr class="my-5">
+
 <div class="container mt-5">
     <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Conéctate en Redes Sociales</h1>
     <p class="text-center mb-4 text-readable">Aquí tienes enlaces a las redes sociales más populares:</p>
@@ -86,5 +137,9 @@
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{ super() if super }} {# Incluye scripts de base.html si existen y super está definido #}
 {% endblock %}
