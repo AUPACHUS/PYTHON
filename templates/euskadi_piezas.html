@@ -5,333 +5,718 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Euskadi en Piezas</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            /* Imagen de fondo de la Ikurriña */
-            background-image: url("{{ url_for('static', filename='img/ikurrina_fondo.jpg') }}");
-            background-color: #0a0a0a; /* Color de respaldo si la imagen no carga */
-            background-size: cover; /* Cubre todo el espacio disponible */
-            background-position: center center; /* Centra la imagen */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-attachment: fixed; /* Fija el fondo durante el scroll (aunque esta página no tiene mucho scroll) */
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #0a0b1e;
             color: white;
             font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            cursor: none;
         }
         
-        .header {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.7);
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
         }
         
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            color: #fff;
-            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-        
-        .container {
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0b1e;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .art-piece {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-            display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            z-index: 1000;
+            transition: opacity 1s ease;
         }
         
-        .polygon-container {
-            position: relative;
-            width: 500px;
-            height: 500px;
+        .loading-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
         }
         
-        .polygon {
-            position: absolute;
-            opacity: 0.9;
-            transition: all 1s ease;
-            transform-origin: center;
-        }
-        
-        /* Colores inspirados en la ikurriña */
-        .color1 { fill: #DA291C; } /* Rojo */
-        .color2 { fill: #007E3A; } /* Verde */
-        .color3 { fill: #FFFFFF; } /* Blanco */
-        .color4 { fill: #F9A01B; } /* Dorado (txapela) */
-        
-        .info-panel {
-            position: absolute;
-            right: 5%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 300px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2rem;
-            border-radius: 10px;
-            border-left: 4px solid #DA291C;
-        }
-        
-        .info-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-        
-        .info-desc {
+        .loading-subtitle {
+            font-size: 1.2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+            text-align: center;
+            max-width: 600px;
             line-height: 1.6;
         }
         
-        .nav-buttons {
+        .loading-progress {
+            width: 300px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+        
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #DA291C, #007E3A);
+            animation: loadingBar 3s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes loadingBar {
+            to {
+                width: 100%;
+            }
+        }
+        
+        .main-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+        
+        .main-container.loaded {
+            opacity: 1;
+        }
+        
+        .species-display {
+            position: relative;
+            width: 80vw;
+            height: 80vh;
+            max-width: 800px;
+            max-height: 800px;
+        }
+        
+        .fragment {
+            position: absolute;
+            opacity: 0.9;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            cursor: pointer;
+        }
+        
+        .fragment:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+        
+        .fragment.animate {
+            animation: organicFloat 6s ease-in-out infinite;
+        }
+        
+        @keyframes organicFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(2deg);
+            }
+            50% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+            75% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+        }
+        
+        .info-panel {
             position: fixed;
-            bottom: 2rem;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 350px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 2rem;
+            border-radius: 10px;
+            border-left: 4px solid #DA291C;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(-50%) translateX(50px);
+            transition: all 0.6s ease;
+        }
+        
+        .info-panel.show {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+        
+        .info-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-weight: bold;
+        }
+        
+        .info-category {
+            font-size: 0.9rem;
+            color: #DA291C;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-description {
+            line-height: 1.6;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .navigation {
+            position: fixed;
+            bottom: 50px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 1rem;
+            gap: 10px;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background: #DA291C;
+            transform: scale(1.2);
+        }
+        
+        .nav-dot:hover {
+            background: rgba(255, 255, 255, 0.6);
+        }
+        
+        .piece-counter {
+            position: fixed;
+            bottom: 50px;
+            right: 50px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .home-button {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .home-button:hover {
+            background: rgba(218, 41, 28, 0.3);
+            border-color: #DA291C;
+            transform: scale(1.1);
+        }
+        
+        .home-button img {
+            max-width: 70%; /* Ajusta para que el logo no toque los bordes */
+            max-height: 70%; /* Ajusta para que el logo no toque los bordes */
+            display: block; /* Elimina espacio extra debajo de la imagen */
+            border-radius: 5px; /* Opcional: si tu logo tiene esquinas y quieres redondearlas un poco */
+        }
+        
+        /* Nuevos estilos para los controles de navegación */
+        .nav-controls {
+            position: fixed;
+            bottom: 50px;
+            left: 50px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
         }
         
         .nav-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
             font-size: 1.2rem;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
         .nav-btn:hover {
-            background: rgba(218, 41, 28, 0.7);
+            background: rgba(218, 41, 28, 0.3);
+            border-color: #DA291C;
+            transform: scale(1.1);
         }
         
-        /* Animaciones */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+        /* Colores específicos para cada elemento */
+        .txapela { fill: #F9A01B; }
+        .lauburu { fill: #DA291C; }
+        .ikurrina-red { fill: #DA291C; }
+        .ikurrina-green { fill: #007E3A; }
+        .ikurrina-white { fill: #FFFFFF; }
+        .kalimotxo { fill: #722F37; }
+        .pelota { fill: #FFFFFF; }
+        .caserio { fill: #8B4513; }
+        .guggenheim { fill: #C0C0C0; }
+        .olentzero { fill: #8B4513; }
+        .txalaparta { fill: #654321; }
+        .pintxos { fill: #FFD700; }
+        .puente { fill: #4682B4; }
+        .eguzkilore { fill: #FFA500; }
+        .basajaun { fill: #228B22; }
         
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-        
-        .pulse {
-            animation: pulse 3s ease infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        @media (max-width: 768px) {
+            .info-panel {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                top: auto;
+                width: 100%;
+                transform: translateY(100%);
+                border-radius: 20px 20px 0 0;
+                border-left: none;
+                border-top: 4px solid #DA291C;
+            }
+            
+            .info-panel.show {
+                transform: translateY(0);
+            }
+            
+            .species-display {
+                width: 90vw;
+                height: 60vh;
+            }
+            
+            .nav-controls {
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                gap: 30px;
+            }
+            
+            .piece-counter {
+                bottom: 90px;
+                right: 50%;
+                transform: translateX(50%);
+                text-align: center;
+                width: 100%;
+            }
+            
+            .navigation {
+                bottom: 120px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>EUSKADI EN PIEZAS</h1>
-        <div class="subtitle">Una representación geométrica de la cultura vasca</div>
+    <div class="custom-cursor"></div>
+    
+    <div class="loading-screen" id="loadingScreen">
+        <h1 class="loading-title">EUSKADI EN PIEZAS</h1>
+        <p class="loading-subtitle">
+            15 elementos culturales. 15 piezas fragmentadas.<br>
+            Una supervivencia cultural unificada.
+        </p>
+        <div class="loading-progress">
+            <div class="loading-bar"></div>
+        </div>
     </div>
     
-    <div class="container">
-        <!-- Txapela (boina vasca) -->
-        <div class="art-piece" id="txapela">
-            <div class="polygon-container">
-                <svg class="polygon floating" viewBox="0 0 100 100" style="top: 20%; left: 30%; width: 52%;">
-                    <polygon points="50,10 80,40 80,70 50,90 20,70 20,40" class="color4"/>
-                </svg>
-                <svg class="polygon pulse" viewBox="0 0 100 100" style="top: 25%; left: 35%; width: 39%;">
-                    <polygon points="50,20 70,40 70,60 50,80 30,60 30,40" class="color1"/>
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">TXAPELA</h2>
-                <p class="info-desc">La boina vasca, símbolo de identidad cultural. Tradicionalmente usada por agricultores y pescadores, hoy es un icono reconocido mundialmente.</p>
-            </div>
+    <div class="main-container" id="mainContainer">
+        <a href="{{ url_for('home') }}" class="home-button" title="Volver al Inicio" id="homeBtn">
+            <img src="python/static/img/logoaupachus.jpg" alt="Inicio - Aupachus">
+        </a>
+        
+        <div class="nav-controls">
+            <div class="nav-btn" id="prevBtn">←</div>
+            <div class="nav-btn" id="nextBtn">→</div>
         </div>
         
-        <!-- Lauburu (cruz vasca) -->
-        <div class="art-piece" id="lauburu">
-            <div class="polygon-container">
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 30%; left: 30%; width: 52%; transform: rotate(45deg);">
-                    <polygon points="50,0 60,40 100,50 60,60 50,100 40,60 0,50 40,40" class="color3"/>
-                </svg>
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 35%; left: 35%; width: 39%; transform: rotate(45deg);">
-                    <polygon points="50,10 55,40 90,50 55,60 50,90 45,60 10,50 45,40" class="color1"/>
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">LAUBURU</h2>
-                <p class="info-desc">Símbolo ancestral vasco que representa la unión de los cuatro elementos o las cuatro direcciones. Es el equivalente vasco a la esvástica, pero sin connotaciones negativas.</p>
-            </div>
+        <div class="species-display" id="speciesDisplay">
+            <!-- Las piezas se generarán dinámicamente -->
         </div>
         
-        <!-- Ikurriña (bandera vasca) -->
-        <div class="art-piece" id="ikurrina">
-            <div class="polygon-container">
-                <svg class="polygon" viewBox="0 0 300 200" style="width: 78%;">
-                    <rect x="0" y="0" width="300" height="200" class="color3"/>
-                    <rect x="0" y="0" width="300" height="40" class="color1"/>
-                    <rect x="0" y="160" width="300" height="40" class="color1"/>
-                    <polygon points="150,100 250,40 250,160" class="color2"/>
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">IKURRIÑA</h2>
-                <p class="info-desc">La bandera vasca, creada en 1894. El rojo representa al pueblo vasco, el verde por el árbol de Guernica y la cruz de San Andrés, y el blanco por la fe católica.</p>
-            </div>
+        <div class="info-panel" id="infoPanel">
+            <div class="info-category" id="infoCategory"></div>
+            <h2 class="info-title" id="infoTitle"></h2>
+            <p class="info-description" id="infoDescription"></p>
         </div>
         
-        <!-- Kalimotxo (bebida) -->
-        <div class="art-piece" id="kalimotxo">
-            <div class="polygon-container">
-                <svg class="polygon floating" viewBox="0 0 100 200" style="width: 39%; left: 35%;">
-                    <polygon points="30,0 70,0 80,200 20,200" class="color1"/>
-                </svg>
-                <svg class="polygon" viewBox="0 0 100 100" style="width: 26%; top: 60%; left: 40%;">
-                    <circle cx="50" cy="50" r="45" class="color4"/>
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">KALIMOTXO</h2>
-                <p class="info-desc">Mezcla de vino tinto y refresco de cola, originario del País Vasco. Popular en fiestas y eventos, especialmente entre los jóvenes.</p>
-            </div>
+        <div class="navigation" id="navigation">
+            <!-- Los puntos de navegación se generarán dinámicamente -->
         </div>
-
-        <!-- Mari Domingi -->
-        <div class="art-piece" id="maridomingi">
-            <div class="polygon-container">
-                <!-- Cuerpo y falda -->
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 15%; left: 35%; width: 39%;">
-                    <polygon points="50,10 70,50 60,90 40,90 30,50" class="color2"/> <!-- Vestido verde -->
-                </svg>
-                <!-- Cabeza -->
-                <svg class="polygon floating" viewBox="0 0 100 100" style="top: 5%; left: 42%; width: 20.8%;">
-                    <circle cx="50" cy="50" r="45" class="color3"/> <!-- Piel clara -->
-                </svg>
-                 <!-- Pañuelo/Pelo -->
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 2%; left: 40%; width: 26%;">
-                    <polygon points="50,0 80,30 70,50 30,50 20,30" class="color1"/> <!-- Pañuelo rojo -->
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">MARI DOMINGI</h2>
-                <p class="info-desc">Personaje de la tradición navideña vasca, a menudo representada como compañera de Olentzero. Trae regalos y alegría a los niños.</p>
-            </div>
+        
+        <div class="piece-counter">
+            <span id="currentPiece">1</span> de <span id="totalPieces">15</span>
         </div>
-
-        <!-- Mari (Diosa) -->
-        <div class="art-piece" id="mari">
-            <div class="polygon-container">
-                <!-- Figura estilizada -->
-                <svg class="polygon pulse" viewBox="0 0 100 100" style="top: 20%; left: 25%; width: 65%;">
-                    <path d="M50,10 C70,30 70,70 50,90 C30,70 30,30 50,10 Z M50,40 Q60,50 50,60 Q40,50 50,40 Z" class="color3"/>
-                </svg>
-                 <!-- Elemento de poder/naturaleza -->
-                <svg class="polygon floating" viewBox="0 0 100 100" style="top: 50%; left: 40%; width: 26%; transform: rotate(15deg);">
-                    <polygon points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35" class="color2"/> <!-- Estrella verde -->
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">MARI</h2>
-                <p class="info-desc">La gran diosa de la mitología vasca, personificación de la Tierra y la naturaleza. Habita en las cumbres de las montañas y controla las tormentas.</p>
-            </div>
-        </div>
-
-        <!-- Basajaun -->
-        <div class="art-piece" id="basajaun">
-            <div class="polygon-container">
-                <!-- Cuerpo robusto -->
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 20%; left: 30%; width: 52%;">
-                    <rect x="20" y="20" width="60" height="70" rx="10" class="color2"/> <!-- Tono tierra/verde oscuro -->
-                </svg>
-                <!-- Cabeza con pelo -->
-                <svg class="polygon floating" viewBox="0 0 100 100" style="top: 10%; left: 38%; width: 31.2%;">
-                    <circle cx="50" cy="50" r="30" class="color4"/> <!-- Tono piel/dorado -->
-                    <polygon points="50,0 100,50 50,100 0,50" style="fill: #5C4033; opacity: 0.7;"/> <!-- Pelo marrón oscuro -->
-                </svg>
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">BASAJAUN</h2>
-                <p class="info-desc">El "Señor del Bosque" en la mitología vasca. Un ser salvaje y peludo, protector de los rebaños y poseedor de conocimientos sobre la agricultura y la herrería.</p>
-            </div>
-        </div>
-
-        <!-- Eguzkilore -->
-        <div class="art-piece" id="eguzkilore">
-            <div class="polygon-container">
-                <!-- Centro de la flor -->
-                <svg class="polygon" viewBox="0 0 100 100" style="top: 35%; left: 35%; width: 39%;">
-                    <circle cx="50" cy="50" r="40" class="color4"/> <!-- Dorado/Amarillo -->
-                </svg>
-                <!-- Pétalos/Espinas estilizadas -->
-                {% for i in range(8) %}
-                <svg class="polygon pulse" viewBox="0 0 100 100" style="top: 35%; left: 35%; width: 39%; transform: rotate({{ i * 45 }}deg);">
-                    <polygon points="50,0 55,40 45,40" class="color3"/> <!-- Blanco/Crema -->
-                </svg>
-                {% endfor %}
-            </div>
-            <div class="info-panel">
-                <h2 class="info-title">EGUZKILORE</h2>
-                <p class="info-desc">La "flor del sol" (Carlina acaulis), un cardo seco que se coloca en las puertas de los caseríos vascos como símbolo de protección contra malos espíritus y tormentas.</p>
-            </div>
-        </div>
-
-    </div>
-    
-    <div class="nav-buttons">
-        <button class="nav-btn" onclick="navigate(-1)">←</button>
-        <button class="nav-btn" onclick="navigate(1)">→</button>
     </div>
     
     <script>
-        let currentIndex = 0;
-        const pieces = document.querySelectorAll('.art-piece');
+        const culturalElements = [
+            {
+                name: "TXAPELA",
+                category: "Vestimenta Tradicional",
+                description: "La boina vasca, símbolo de identidad cultural reconocido mundialmente. Tradicionalmente usada por agricultores y pescadores, hoy es un icono de la cultura vasca que ha trascendido fronteras.",
+                fragments: [
+                    { type: "polygon", points: "50,10 85,35 85,65 50,90 15,65 15,35", class: "txapela", delay: 0 },
+                    { type: "polygon", points: "50,20 75,40 75,60 50,80 25,60 25,40", class: "txapela", delay: 200 },
+                    { type: "circle", cx: "50", cy: "50", r: "15", class: "txapela", delay: 400 }
+                ]
+            },
+            {
+                name: "LAUBURU",
+                category: "Símbolo Ancestral",
+                description: "Símbolo ancestral vasco que representa la unión de los cuatro elementos o las cuatro direcciones cardinales. Es un símbolo solar de buena fortuna y protección.",
+                fragments: [
+                    { type: "path", d: "M50,0 Q65,25 50,50 Q25,35 0,50 Q25,65 50,50 Q75,65 100,50 Q75,35 50,50 Q65,25 50,0", class: "lauburu", delay: 0 },
+                    { type: "circle", cx: "50", cy: "50", r: "20", class: "lauburu", delay: 300 },
+                    { type: "circle", cx: "50", cy: "50", r: "8", class: "ikurrina-white", delay: 500 }
+                ]
+            },
+            {
+                name: "IKURRIÑA",
+                category: "Símbolo Nacional",
+                description: "La bandera vasca, diseñada en 1894. El rojo representa al pueblo vasco, el verde simboliza el árbol de Guernica y la cruz blanca representa el catolicismo.",
+                fragments: [
+                    { type: "rect", x: "0", y: "0", width: "100", height: "60", class: "ikurrina-white", delay: 0 },
+                    { type: "rect", x: "0", y: "0", width: "100", height: "12", class: "ikurrina-red", delay: 200 },
+                    { type: "rect", x: "0", y: "48", width: "100", height: "12", class: "ikurrina-red", delay: 400 },
+                    { type: "polygon", points: "50,30 85,12 85,48", class: "ikurrina-green", delay: 600 }
+                ]
+            },
+            {
+                name: "KALIMOTXO",
+                category: "Bebida Popular",
+                description: "La icónica mezcla de vino tinto y refresco de cola, originaria del País Vasco. Popularizada en las fiestas populares, especialmente entre los jóvenes.",
+                fragments: [
+                    { type: "polygon", points: "35,0 65,0 70,100 30,100", class: "kalimotxo", delay: 0 },
+                    { type: "ellipse", cx: "50", cy: "25", rx: "15", ry: "20", class: "kalimotxo", delay: 300 },
+                    { type: "circle", cx: "50", cy: "15", r: "8", class: "ikurrina-white", delay: 500 }
+                ]
+            },
+            {
+                name: "PELOTA VASCA",
+                category: "Deporte Tradicional",
+                description: "Deporte tradicional vasco con varias modalidades. La cesta punta alcanza velocidades superiores a 300 km/h, siendo uno de los deportes más rápidos del mundo.",
+                fragments: [
+                    { type: "circle", cx: "50", cy: "50", r: "45", class: "pelota", delay: 0 },
+                    { type: "path", d: "M20,50 Q50,20 80,50 Q50,80 20,50", class: "ikurrina-red", delay: 300 },
+                    { type: "circle", cx: "50", cy: "50", r: "15", class: "ikurrina-red", delay: 500 }
+                ]
+            },
+            {
+                name: "CASERÍO VASCO",
+                category: "Arquitectura Rural",
+                description: "Típica construcción rural vasca con tejado inclinado para evitar la acumulación de nieve. Representan el corazón de la cultura agraria vasca.",
+                fragments: [
+                    { type: "polygon", points: "10,90 90,90 90,40 50,10 10,40", class: "caserio", delay: 0 },
+                    { type: "rect", x: "40", y: "50", width: "20", height: "40", class: "ikurrina-red", delay: 300 },
+                    { type: "rect", x: "25", y: "65", width: "15", height: "25", class: "ikurrina-white", delay: 500 },
+                    { type: "rect", x: "60", y: "65", width: "15", height: "25", class: "ikurrina-white", delay: 700 }
+                ]
+            },
+            {
+                name: "GUGGENHEIM",
+                category: "Arquitectura Moderna",
+                description: "Icono arquitectónico de Bilbao diseñado por Frank Gehry. Clave en la transformación de Bilbao de ciudad industrial a centro cultural.",
+                fragments: [
+                    { type: "path", d: "M10,70 Q30,20 50,30 Q70,15 90,70 Z", class: "guggenheim", delay: 0 },
+                    { type: "polygon", points: "30,50 40,30 50,50", class: "guggenheim", delay: 300 },
+                    { type: "polygon", points: "50,50 60,30 70,50", class: "guggenheim", delay: 500 },
+                    { type: "circle", cx: "50", cy: "25", r: "10", class: "guggenheim", delay: 700 }
+                ]
+            },
+            {
+                name: "OLENTZERO",
+                category: "Tradición Navideña",
+                description: "Personaje mitológico vasco que trae regalos en Navidad. Baja de las montañas el 24 de diciembre para repartir regalos a los niños.",
+                fragments: [
+                    { type: "polygon", points: "50,5 75,35 75,85 50,95 25,85 25,35", class: "olentzero", delay: 0 },
+                    { type: "circle", cx: "50", cy: "30", r: "20", class: "ikurrina-white", delay: 300 },
+                    { type: "polygon", points: "50,15 65,25 65,35 50,45 35,35 35,25", class: "txapela", delay: 500 },
+                    { type: "polygon", points: "50,55 65,65 50,75 35,65", class: "ikurrina-red", delay: 700 }
+                ]
+            },
+            {
+                name: "TXALAPARTA",
+                category: "Instrumento Musical",
+                description: "Instrumento musical tradicional vasco de percusión. Originalmente usado para comunicarse entre montañas, hoy es símbolo de la cultura musical vasca.",
+                fragments: [
+                    { type: "rect", x: "10", y: "40", width: "80", height: "8", class: "txalaparta", delay: 0 },
+                    { type: "rect", x: "20", y: "48", width: "8", height: "20", class: "ikurrina-red", delay: 300 },
+                    { type: "rect", x: "72", y: "48", width: "8", height: "20", class: "ikurrina-red", delay: 500 },
+                    { type: "polygon", points: "40,35 45,25 55,25 60,35", class: "txalaparta", delay: 700 },
+                    { type: "polygon", points: "40,35 45,25 55,25 60,35", class: "txalaparta", delay: 900, transform: "translate(20,0)" }
+                ]
+            },
+            {
+                name: "PINTXOS",
+                category: "Gastronomía",
+                description: "Delicias gastronómicas vascas más elaboradas que las tapas. Bilbao y San Sebastián son famosas por sus bares de pintxos, combinando tradición e innovación culinaria.",
+                fragments: [
+                    { type: "polygon", points: "30,60 40,40 60,40 70,60 60,80 40,80", class: "pintxos", delay: 0 },
+                    { type: "circle", cx: "35", cy: "35", r: "12", class: "ikurrina-red", delay: 300 },
+                    { type: "rect", x: "55", y: "30", width: "20", height: "15", class: "ikurrina-green", delay: 500 },
+                    { type: "rect", x: "48", y: "10", width: "4", height: "30", class: "txalaparta", delay: 700 }
+                ]
+            },
+            {
+                name: "PUENTE VIZCAYA",
+                category: "Patrimonio Industrial",
+                description: "Puente transbordador de Portugalete, Patrimonio de la Humanidad. Primer puente transbordador del mundo, símbolo de la Revolución Industrial vasca.",
+                fragments: [
+                    { type: "rect", x: "20", y: "40", width: "60", height: "8", class: "puente", delay: 0 },
+                    { type: "rect", x: "20", y: "48", width: "8", height: "30", class: "puente", delay: 300 },
+                    { type: "rect", x: "72", y: "48", width: "8", height: "30", class: "puente", delay: 500 },
+                    { type: "polygon", points: "20,40 30,25 70,25 80,40", class: "puente", delay: 700 },
+                    { type: "rect", x: "46", y: "25", width: "8", height: "40", class: "ikurrina-red", delay: 900 }
+                ]
+            },
+            {
+                name: "EGUZKILORE",
+                category: "Símbolo Protector",
+                description: "La 'flor del sol', un cardo seco que tradicionalmente se colgaba en las puertas de los caseríos como amuleto protector contra malos espíritus.",
+                fragments: [
+                    { type: "circle", cx: "50", cy: "50", r: "35", class: "eguzkilore", delay: 0 },
+                    { type: "polygon", points: "50,15 55,35 45,35", class: "ikurrina-white", delay: 200, transform: "rotate(0 50 50)" },
+                    { type: "polygon", points: "50,15 55,35 45,35", class: "ikurrina-white", delay: 300, transform: "rotate(30 50 50)" },
+                    { type: "polygon", points: "50,15 55,35 45,35", class: "ikurrina-white", delay: 400, transform: "rotate(60 50 50)" },
+                    { type: "polygon", points: "50,15 55,35 45,35", class: "ikurrina-white", delay: 500, transform: "rotate(90 50 50)" },
+                    { type: "circle", cx: "50", cy: "50", r: "15", class: "ikurrina-red", delay: 700 }
+                ]
+            },
+            {
+                name: "BASAJAUN",
+                category: "Mitología Vasca",
+                description: "El 'Señor del Bosque' en la mitología vasca. Ser peludo que protege los rebaños y los bosques. Enseñó a los humanos la agricultura y la herrería.",
+                fragments: [
+                    { type: "polygon", points: "50,5 75,35 75,85 50,95 25,85 25,35", class: "basajaun", delay: 0 },
+                    { type: "circle", cx: "50", cy: "30", r: "18", class: "caserio", delay: 300 },
+                    { type: "polygon", points: "50,10 65,25 65,35 50,50 35,35 35,25", class: "caserio", delay: 500 },
+                    { type: "polygon", points: "50,55 65,65 50,75 35,65", class: "ikurrina-red", delay: 700 }
+                ]
+            }
+        ];
         
-        function showPiece(index) {
-            pieces.forEach((piece, i) => {
-                piece.style.display = i === index ? 'flex' : 'none';
+        let currentIndex = 0;
+        let isTransitioning = false;
+        let autoChangeInterval;
+        
+        // Cursor personalizado
+        const cursor = document.querySelector('.custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        
+        // Inicialización
+        function init() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loadingScreen').style.display = 'none';
+                    document.getElementById('mainContainer').classList.add('loaded');
+                    createNavigation();
+                    showElement(0);
+                    setupEventListeners();
+                    startAutoChange();
+                }, 1000);
+            }, 3500);
+        }
+        
+        function createNavigation() {
+            const nav = document.getElementById('navigation');
+            const totalSpan = document.getElementById('totalPieces');
+            totalSpan.textContent = culturalElements.length;
+            
+            culturalElements.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => showElement(index));
+                nav.appendChild(dot);
             });
         }
         
-        function navigate(direction) {
-            currentIndex += direction;
-            if (currentIndex < 0) currentIndex = pieces.length - 1;
-            if (currentIndex >= pieces.length) currentIndex = 0;
-            showPiece(currentIndex);
+        function createFragments(element) {
+            const display = document.getElementById('speciesDisplay');
+            display.innerHTML = '';
+            
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            
+            element.fragments.forEach((fragment, index) => {
+                const shape = document.createElementNS('http://www.w3.org/2000/svg', fragment.type);
+                
+                // Aplicar atributos específicos del tipo
+                Object.keys(fragment).forEach(key => {
+                    if (key !== 'type' && key !== 'class' && key !== 'delay' && key !== 'transform') {
+                        shape.setAttribute(key, fragment[key]);
+                    }
+                });
+                
+                shape.classList.add('fragment', fragment.class);
+                if (fragment.transform) {
+                    shape.setAttribute('transform', fragment.transform);
+                }
+                
+                // Animación de entrada
+                setTimeout(() => {
+                    shape.style.opacity = '0.9';
+                    shape.classList.add('animate');
+                    
+                    // Animación de flotación orgánica con retrasos aleatorios
+                    setTimeout(() => {
+                        shape.style.animationDelay = `${Math.random() * 2}s`;
+                    }, fragment.delay);
+                }, fragment.delay);
+                
+                svg.appendChild(shape);
+            });
+            
+            display.appendChild(svg);
         }
         
-        // Inicialización
-        showPiece(0);
+        function showElement(index) {
+            if (isTransitioning || index === currentIndex) return;
+            
+            isTransitioning = true;
+            const element = culturalElements[index];
+            
+            // Actualizar información
+            document.getElementById('infoCategory').textContent = element.category;
+            document.getElementById('infoTitle').textContent = element.name;
+            document.getElementById('infoDescription').textContent = element.description;
+            document.getElementById('currentPiece').textContent = index + 1;
+            
+            // Ocultar panel de información
+            const infoPanel = document.getElementById('infoPanel');
+            infoPanel.classList.remove('show');
+            
+            // Reiniciar el intervalo de cambio automático
+            resetAutoChange();
+            
+            // Crear nuevos fragmentos
+            setTimeout(() => {
+                createFragments(element);
+                
+                // Mostrar panel de información
+                setTimeout(() => {
+                    infoPanel.classList.add('show');
+                    isTransitioning = false;
+                }, 800);
+            }, 200);
+            
+            // Actualizar navegación
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+            
+            currentIndex = index;
+        }
         
-        // Efectos aleatorios para los polígonos
-        document.querySelectorAll('.polygon').forEach(poly => {
-            // Añade pequeñas variaciones aleatorias a la posición y animación
-            const randomX = (Math.random() - 0.5) * 10;
-            const randomY = (Math.random() - 0.5) * 10;
-            const randomDelay = Math.random() * 5;
-            const randomDuration = 3 + Math.random() * 4;
+        function setupEventListeners() {
+            // Botón de inicio
+            document.getElementById('homeBtn').addEventListener('click', (e) => {
+                // Si el único propósito del botón es navegar a index.html,
+                // el comportamiento por defecto del enlace <a> es suficiente.
+                // No necesitamos e.preventDefault() ni showElement(0) aquí.
+                // Si quieres que haga algo *antes* de navegar, puedes añadir lógica aquí,
+                // pero para una simple navegación, este listener podría incluso eliminarse
+                // o dejarse vacío si no hay acciones adicionales.
+            });
             
-            poly.style.transform += ` translate(${randomX}px, ${randomY}px)`;
+            // Botón anterior
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (isTransitioning) return;
+                const prevIndex = currentIndex > 0 ? currentIndex - 1 : culturalElements.length - 1;
+                showElement(prevIndex);
+            });
             
-            if (poly.classList.contains('floating')) {
-                poly.style.animationDelay = `${randomDelay}s`;
-                poly.style.animationDuration = `${randomDuration}s`;
-            }
-        });
+            // Botón siguiente
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (isTransitioning) return;
+                const nextIndex = currentIndex < culturalElements.length - 1 ? currentIndex + 1 : 0;
+                showElement(nextIndex);
+            });
+            
+            // Eventos de teclado
+            document.addEventListener('keydown', (e) => {
+                if (isTransitioning) return;
+                
+                if (e.key === 'ArrowLeft') {
+                    const prevIndex = currentIndex > 0 ? currentIndex - 1 : culturalElements.length - 1;
+                    showElement(prevIndex);
+                } else if (e.key === 'ArrowRight') {
+                    const nextIndex = currentIndex < culturalElements.length - 1 ? currentIndex + 1 : 0;
+                    showElement(nextIndex);
+                } else if (e.key === 'Home') {
+                    showElement(0);
+                }
+            });
+        }
+        
+        function startAutoChange() {
+            autoChangeInterval = setInterval(() => {
+                if (!isTransitioning) {
+                    const nextIndex = currentIndex < culturalElements.length - 1 ? currentIndex + 1 : 0;
+                    showElement(nextIndex);
+                }
+            }, 10000);
+        }
+        
+        function resetAutoChange() {
+            clearInterval(autoChangeInterval);
+            startAutoChange();
+        }
+        
+        // Iniciar
+        init();
     </script>
 </body>
 </html>
