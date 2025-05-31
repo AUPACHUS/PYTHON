@@ -3,18 +3,18 @@
 {% block title %}Redes Sociales, Medios y Enlaces Útiles{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-3"> <!-- Reducido el margen superior de mt-5 a mt-3 -->
     <h1 class="animated-title text-center mb-5 title-rainbow-effect" style="font-size: 3.5rem;">Enlaces, Medios y Plataformas</h1>
 
     <div class="row"> <!-- Fila principal para las columnas -->
 
         <!-- Columna Izquierda -->
-        <div class="col-md-6">
+        <div class="col-md-6 d-flex flex-column"> <!-- Añadido d-flex flex-column -->
 
             <!-- Sección: Más Enlaces y Medios -->
-            <div class="mb-5">
+            <div class="mb-5 flex-fill d-flex flex-column"> <!-- Añadido flex-fill d-flex flex-column -->
                 <h2 class="text-center mb-4" style="font-size: 2.2rem;">TV y Otros Medios</h2>
-                <div class="row justify-content-center text-center">
+                <div class="row justify-content-center text-center flex-grow-1 align-items-center"> <!-- Añadido flex-grow-1 align-items-center -->
                     <div class="col-lg-10 col-md-12">
                         <a href="https://tv.garden/" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-100 d-block mb-3">
                             TV Garden
@@ -27,50 +27,50 @@
             </div>
 
             <!-- Sección: Emisoras de Radio -->
-            <div class="mb-5">
+            <div class="mb-5 flex-fill d-flex flex-column"> <!-- Añadido flex-fill d-flex flex-column -->
                 <h2 class="text-center mb-4" style="font-size: 2.2rem;">Emisoras de Radio</h2>
-                <p class="text-center mb-3 text-readable">
+                <div class="row text-center flex-grow-1"> <!-- Añadido flex-grow-1 -->
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://emisora.org.es/genero/noticias/#rne" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-lg w-100">RNE Radio Nacional</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://cadenaser.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-100">Cadena SER</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://emisora.org.es/genero/noticias/#radio-5" target="_blank" rel="noopener noreferrer" class="btn btn-info btn-lg w-100">Radio 5 RNE</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://emisora.org.es/genero/noticias/#onda-cero" target="_blank" rel="noopener noreferrer" class="btn btn-warning btn-lg w-100">Onda Cero</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://emisora.org.es/genero/noticias/#marca" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-100">Radio Marca</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://emisora.org.es/#rock-fm" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg w-100">Rock FM</a>
+                    </div>
+                    <div class="col-lg-6 col-md-12 mb-3">
+                        <a href="https://los40.com/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg w-100">Los 40</a>
+                    </div>
+                </div>
+                <p class="text-center mt-3 text-readable"> <!-- mt-3 para añadir un poco de espacio arriba -->
                     Escucha las últimas noticias en directo.
                     <br>
                     <small>Fuente de emisoras: <a href="https://emisora.org.es/genero/noticias/" target="_blank" rel="noopener noreferrer" class="text-muted">emisora.org.es</a></small>
                     <br>
                     <small class="text-danger"><strong>Nota:</strong> La disponibilidad y funcionalidad de las emisoras dependen de los proveedores.</small>
                 </p>
-                <div class="row text-center">
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://emisora.org.es/genero/noticias/#rne" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">RNE Radio Nacional</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://cadenaser.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Cadena SER</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://emisora.org.es/genero/noticias/#radio-5" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Radio 5 RNE</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://emisora.org.es/genero/noticias/#onda-cero" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Onda Cero</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://emisora.org.es/genero/noticias/#marca" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Radio Marca</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://emisora.org.es/#rock-fm" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Rock FM</a>
-                    </div>
-                    <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://los40.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary btn-lg w-100">Los 40</a>
-                    </div>
-                </div>
             </div>
 
         </div>
 
         <!-- Columna Derecha -->
-        <div class="col-md-6">
+        <div class="col-md-6 d-flex flex-column"> <!-- Añadido d-flex flex-column -->
 
             <!-- Sección: Redes Sociales -->
-            <div class="mb-5">
+            <div class="mb-5 flex-fill d-flex flex-column"> <!-- Añadido flex-fill d-flex flex-column -->
                 <h2 class="text-center mb-4" style="font-size: 2.2rem;">Redes Sociales</h2>
                 <p class="text-center mb-3 text-readable">Conéctate en las redes sociales más populares:</p>
-                <div class="row text-center">
+                <div class="row text-center flex-grow-1"> <!-- Añadido flex-grow-1 -->
                     <div class="col-lg-6 col-md-12 mb-3">
                         <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-100">Facebook</a>
                     </div>
@@ -102,7 +102,7 @@
             </div>
 
             <!-- Sección: Plataformas de IA -->
-            <div class="mb-5">
+            <div class="mb-5 flex-fill d-flex flex-column"> <!-- Añadido flex-fill d-flex flex-column -->
                 <h2 class="text-center mb-4" style="font-size: 2.2rem;">Plataformas de IA</h2>
                 <p class="text-center mb-3 text-readable">
                     Explora las principales plataformas de inteligencia artificial.
@@ -114,33 +114,33 @@
                 <p class="mb-3 text-readable">
                     La <strong>inteligencia artificial</strong> (IA) es una rama de la informática que se dedica a crear sistemas capaces de realizar tareas que normalmente requieren inteligencia humana.
                 </p>
-                <div class="row text-center">
+                <div class="row text-center flex-grow-1"> <!-- Añadido flex-grow-1 -->
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://chat.openai.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">ChatGPT</a>
+                        <a href="https://chat.openai.com/" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-lg w-100">ChatGPT</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://www.deepseek.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">DeepSeek</a>
+                        <a href="https://www.deepseek.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-100">DeepSeek</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">Claude</a>
+                        <a href="https://claude.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-info btn-lg w-100">Claude</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://gemini.google/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">Gemini</a>
+                        <a href="https://gemini.google/" target="_blank" rel="noopener noreferrer" class="btn btn-danger btn-lg w-100">Gemini</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">GitHub Copilot</a>
+                        <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer" class="btn btn-dark btn-lg w-100">GitHub Copilot</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://grok.nvidia.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">Grok</a>
+                        <a href="https://grok.nvidia.com/" target="_blank" rel="noopener noreferrer" class="btn btn-warning btn-lg w-100">Grok</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://www.perplexity.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">Perplexity AI</a>
+                        <a href="https://www.perplexity.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-lg w-100">Perplexity AI</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://www.midjourney.com/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">MidJourney</a>
+                        <a href="https://www.midjourney.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg w-100">MidJourney</a>
                     </div>
                     <div class="col-lg-6 col-md-12 mb-3">
-                        <a href="https://www.stability.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-light btn-lg w-100">Stability AI</a>
+                        <a href="https://www.stability.ai/" target="_blank" rel="noopener noreferrer" class="btn btn-info btn-lg w-100">Stability AI</a>
                     </div>
                 </div>
             </div>
