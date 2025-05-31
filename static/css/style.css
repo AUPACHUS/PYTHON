@@ -293,3 +293,32 @@ a:hover {
   /* Ajusta el tamaño base del avatar si es necesario */
   /* width: 100px; height: 100px; */ /* Ya está inline */
 }
+
+/* Estilos para el contenedor del logo Aupachus */
+.logo-aupachus-container {
+    position: fixed; /* Posición fija en la pantalla */
+    left: 20px;      /* Distancia desde la izquierda. Ajusta según necesites. */
+    top: 100px;      /* Distancia desde arriba. Ajusta según necesites. */
+    padding: 10px;   /* Espacio interno alrededor de la imagen */
+    background-color: #f0f0f0; /* Color de fondo inicial del cuadro */
+    border: 2px solid #ccc;     /* Borde inicial del cuadro */
+    border-radius: 8px;         /* Esquinas redondeadas */
+    cursor: pointer;            /* Cursor de mano al pasar por encima */
+    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transición suave para el efecto hover */
+    z-index: 1000;              /* Asegura que esté por encima de otros elementos si es necesario */
+}
+
+.logo-aupachus-container:hover {
+    background-color: #e0e0e0; /* Color de fondo del cuadro al pasar el ratón (más oscuro) */
+    border-color: #45a049;     /* Color del borde al pasar el ratón (verde, como el hover del botón de stop) */
+}
+
+.logo-aupachus-container img {
+    display: block;      /* Asegura que la imagen se comporte como un bloque */
+    max-width: 150px;    /* Ancho máximo para el logo. Ajusta este valor según el tamaño deseado para tu logo. */
+    height: auto;        /* Mantiene la proporción de la imagen */
+    border-radius: 4px;  /* Opcional: esquinas ligeramente redondeadas para la imagen misma */
+}
+
+/* Ajuste para que el contenido principal no quede debajo del logo fijo si es necesario */
+/* body { padding-left: 200px; } /* Descomenta y ajusta si el logo es muy ancho y tapa contenido */

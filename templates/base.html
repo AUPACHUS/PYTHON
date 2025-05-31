@@ -54,6 +54,11 @@
                            {% if current_endpoint == 'opinion' %}aria-current="page"{% endif %}>¿Y tú qué opinas?</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if current_endpoint == 'euskadi_piezas' %}active{% endif %}"
+                           href="{{ url_for('euskadi_piezas') }}"
+                           {% if current_endpoint == 'euskadi_piezas' %}aria-current="page"{% endif %}>Euskadi en Piezas</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" target="_blank" rel="noopener noreferrer">BLOGGER</a>
                     </li>
                     <li class="nav-item">

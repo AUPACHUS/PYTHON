@@ -300,6 +300,11 @@ def cursos():
 def enlaces():
     return render_template("enlaces.html")
 
+@app.route("/euskadi-en-piezas")
+def euskadi_piezas():
+    """Ruta para la página Euskadi en Piezas."""
+    return render_template("euskadi_piezas.html")
+
 if __name__ == "__main__":
     # Para desarrollo local, puedes activar el debug explícitamente.
     # En producción, el servidor WSGI (Gunicorn) ejecutará la app,
