@@ -3,8 +3,8 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-    <!-- Reproductor de Música Fijo a la Izquierda -->
-    <div class="music-player-container" style="position: fixed; left: 0; top: 100px; width: 250px; z-index: 1030; padding: 5px;">
+    <!-- Reproductor de Música Fijo en la Esquina Superior Derecha -->
+    <div class="music-player-container" style="position: fixed; top: 100px; right: 20px; width: 250px; z-index: 1030;">
         <div class="card p-3 shadow-sm neon-box" style="background-color: rgba(0,0,0,0.7); border: 1px solid #0ff; box-shadow: 0 0 10px #0ff, 0 0 20px #0ff inset; height: auto;">
             <h5 class="card-title text-center mb-3" style="color: #0ff; text-shadow: 0 0 5px #0ff;">Música</h5>
             <div class="btn-group d-flex w-100 mb-2" role="group" aria-label="Controles de música">
@@ -33,7 +33,7 @@
         </div>
     </div>
 
-    <div class="container mt-5" style="margin-left: 260px;"> <!-- Margen izquierdo para dejar espacio al reproductor -->
+    <div class="container mt-5"> <!-- Eliminado el margen izquierdo, el contenido fluye naturalmente -->
         <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenid@ a mi Web</h1>
         <!-- El avatar y el botón de GitHub se han movido a base.html para aparecer en todas las páginas -->
         
