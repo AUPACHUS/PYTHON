@@ -11,7 +11,6 @@
     <div id="dynamic-page-background"></div> <!-- Nuevo contenedor para el fondo dinámico -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" aria-label="Ir al perfil de Twitch">Aupachus</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -59,6 +58,11 @@
                            {% if current_endpoint == 'euskadi_piezas' %}aria-current="page"{% endif %}>Euskadi en Piezas</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if current_endpoint == 'zelda_vasco_game' %}active{% endif %}"
+                           href="{{ url_for('zelda_vasco_game') }}"
+                           {% if current_endpoint == 'zelda_vasco_game' %}aria-current="page"{% endif %}>Zelda Vasco Game</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" target="_blank" rel="noopener noreferrer">BLOGGER</a>
                     </li>
                     <li class="nav-item">
@@ -86,6 +90,10 @@
                                 PayPal
                             </button>
                         </form>
+                    </div>
+                    <!-- Logo movido a la derecha del todo -->
+                    <a class="navbar-brand ms-2" href="https://www.twitch.tv/aupachus" target="_blank" rel="noopener noreferrer" title="Aupachus en Twitch" aria-label="Ir al perfil de Twitch de Aupachus">
+                        <img src="{{ url_for('static', filename='img/logoaupachus.jpg') }}" alt="Logo Aupachus" style="height: 60px; width: auto; border-radius: 50%;">
                     </div>
                 </div>
             </div>

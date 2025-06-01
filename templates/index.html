@@ -3,10 +3,6 @@
 {% block title %}Inicio{% endblock %}
 
 {% block content %}
-    <!-- Contenedor para el logo en la parte izquierda -->
-    <div class="logo-aupachus-container">
-        <img src="{{ url_for('static', filename='img/logoaupachus.jpg') }}" alt="Logo Aupachus">
-    </div>
 
     <div class="container mt-5">
         <h1 class="animated-title text-center mb-4 title-rainbow-effect" style="font-size: 5rem;">Bienvenid@ a mi Web</h1>
@@ -253,11 +249,11 @@
             <a href="{{ url_for('social') }}" class="btn btn-info">Explorar IA y Redes Sociales</a>
             <a href="{{ url_for('ver_pdfs') }}" class="btn btn-primary">Ver PDFs disponibles</a>
             <a href="{{ url_for('galeria') }}" class="btn btn-success">Galería de fotos</a>
-            <a href="{{ url_for('social') }}" class="btn btn-warning">Redes Sociales</a>    
+            <a href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" class="btn btn-outline-info" target="_blank" rel="noopener noreferrer">BLOGGER</a>
             <a href="{{ url_for('enlaces') }}" class="btn btn-danger">Enlaces</a>
             <a href="{{ url_for('cursos') }}" class="btn btn-secondary">Cursos</a>
             <a href="{{ url_for('opinion') }}" class="btn btn-dark">¿Y tú qué opinas?</a>
-            <a href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" class="btn btn-outline-info" target="_blank" rel="noopener noreferrer">BLOGGER</a>
+            <a href="{{ url_for('zelda_vasco_game') }}" class="btn btn-success">Jugar Mikel eta Aneren Abentura</a> 
         </div>
         
         <p class="rainbow-text lorem-text-large">

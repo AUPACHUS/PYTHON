@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mikel eta Aneren Abentura</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 800px;
+            height: 600px;
+            background: #1a4a1a;
+            border: 4px solid #8B4513;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #87CEEB 0%, #228B22 30%, #006400 100%);
+            position: relative;
+        }
+
+        .character {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        #hero {
+            background: #FF6B35;
+            border: 2px solid #8B4513;
+            border-radius: 50% 50% 0 0;
+            left: 100px;
+            top: 500px;
+        }
+
+        #hero::after {
+            content: '⚔️';
+            position: absolute;
+            right: -15px;
+            top: 5px;
+            font-size: 16px;
+        }
+
+        .friend {
+            border-radius: 50%;
+            border: 2px solid #4169E1;
+        }
+
+        #lamina {
+            background: #FFD700;
+            left: 200px;
+            top: 200px;
+        }
+
+        #lamina::after {
+            content: '✨';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+        }
+
+        #basajaun {
+            background: #8B4513;
+            left: 400px;
+            top: 300px;
+        }
+
+        #basajaun::after {
+            content: '🌲';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+        }
+
+        #princess {
+            background: #FF69B4;
+            border: 2px solid #FFD700;
+            border-radius: 50%;
+            right: 50px;
+            top: 50px;
+            animation: glow 2s infinite alternate;
+        }
+
+        #princess::after {
+            content: '👑';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #FFD700; }
+            to { box-shadow: 0 0 20px #FFD700, 0 0 30px #FFD700; }
+        }
+
+        .enemy {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            background: #8B0000;
+            border: 2px solid #000;
+            border-radius: 50%;
+        }
+
+        .enemy::after {
+            content: '👹';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+        }
+
+        .obstacle {
+            position: absolute;
+            background: #654321;
+            border: 2px solid #8B4513;
+        }
+
+        .tree {
+            background: #228B22;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .tree::after {
+            content: '🌳';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+        }
+
+        .rock {
+            background: #696969;
+            border-radius: 20%;
+        }
+
+        .rock::after {
+            content: '🗿';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 25px;
+        }
+
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 100;
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 100;
+        }
+
+        #story {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            background: rgba(0,0,0,0.8);
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-width: 200px;
+            z-index: 100;
+        }
+
+        #mobileControls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: none;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(3, 60px);
+            gap: 5px;
+            z-index: 100;
+        }
+
+        .mobileBtn {
+            background: rgba(255,255,255,0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s;
+        }
+
+        .mobileBtn:active {
+            background: rgba(255,255,255,1);
+            transform: scale(0.95);
+        }
+
+        #messageBox {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 400px;
+            text-align: center;
+            display: none;
+            z-index: 101;
+        }
+
+        @media (max-width: 900px) {
+            #gameContainer {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            #mobileControls {
+                display: grid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="gameCanvas">
+            <!-- Héroe -->
+            <div id="hero" class="character"></div>
+            
+            <!-- Amigos -->
+            <div id="lamina" class="character friend"></div>
+            <div id="basajaun" class="character friend"></div>
+            
+            <!-- Princesa -->
+            <div id="princess" class="character"></div>
+            
+            <!-- Obstáculos -->
+            <div class="obstacle tree" style="left: 300px; top: 150px; width: 50px; height: 60px;"></div>
+            <div class="obstacle tree" style="left: 500px; top: 250px; width: 50px; height: 60px;"></div>
+            <div class="obstacle rock" style="left: 150px; top: 350px; width: 40px; height: 40px;"></div>
+            <div class="obstacle rock" style="left: 600px; top: 400px; width: 40px; height: 40px;"></div>
+        </div>
+        
+        <div id="ui">
+            <div>Vida: <span id="health">100</span></div>
+            <div>Puntos: <span id="score">0</span></div>
+            <div>Amigos: <span id="friendsCount">0</span>/2</div>
+        </div>
+        
+        <div id="controls">
+            <div>🎮 Controles:</div>
+            <div>WASD o Flechas - Mover</div>
+            <div>Espacio - Atacar</div>
+            <div>R - Reiniciar</div>
+        </div>
+        
+        <div id="story">
+            <h3>🏰 Mikel eta Aneren Abentura</h3>
+            <p>El valiente Mikel debe rescatar a la princesa Ane del malvado Gaueko. 
+            Busca a Lamina (hada) y Basajaun (guardián del bosque) para que te ayuden en tu misión.</p>
+        </div>
+        
+        <div id="mobileControls">
+            <div></div>
+            <div class="mobileBtn" data-key="ArrowUp">↑</div>
+            <div></div>
+            <div class="mobileBtn" data-key="ArrowLeft">←</div>
+            <div class="mobileBtn" data-key=" ">⚔️</div>
+            <div class="mobileBtn" data-key="ArrowRight">→</div>
+            <div></div>
+            <div class="mobileBtn" data-key="ArrowDown">↓</div>
+            <div class="mobileBtn" data-key="KeyR">🔄</div>
+        </div>
+        
+        <div id="messageBox"></div>
+    </div>
+
+    <script>
+        class VascoZeldaGame {
+            constructor() {
+                this.hero = document.getElementById('hero');
+                this.princess = document.getElementById('princess');
+                this.lamina = document.getElementById('lamina');
+                this.basajaun = document.getElementById('basajaun');
+                
+                this.heroPos = {x: 100, y: 500};
+                this.health = 100;
+                this.score = 0;
+                this.friendsCollected = 0;
+                this.enemies = [];
+                this.gameWon = false;
+                
+                this.keys = {};
+                this.obstacles = [];
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.setupObstacles();
+                this.spawnEnemies();
+                this.gameLoop();
+                this.showMessage("¡Kaixo Mikel! Encuentra a tus amigos Lamina y Basajaun, luego rescata a la princesa Ane de las garras de Gaueko.");
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        this.attack();
+                    }
+                    if (e.code === 'KeyR') {
+                        this.restart();
+                    }
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+                
+                // Controles móviles
+                document.querySelectorAll('.mobileBtn').forEach(btn => {
+                    btn.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        const key = btn.dataset.key;
+                        if (key === ' ') {
+                            this.attack();
+                        } else if (key === 'KeyR') {
+                            this.restart();
+                        } else {
+                            this.keys[key] = true;
+                        }
+                    });
+                    
+                    btn.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        const key = btn.dataset.key;
+                        if (key !== ' ' && key !== 'KeyR') {
+                            this.keys[key] = false;
+                        }
+                    });
+                });
+            }
+            
+            setupObstacles() {
+                const obstacleElements = document.querySelectorAll('.obstacle');
+                obstacleElements.forEach(obs => {
+                    this.obstacles.push({
+                        x: parseInt(obs.style.left),
+                        y: parseInt(obs.style.top),
+                        width: parseInt(obs.style.width),
+                        height: parseInt(obs.style.height)
+                    });
+                });
+            }
+            
+            spawnEnemies() {
+                const positions = [
+                    {x: 250, y: 400},
+                    {x: 450, y: 150},
+                    {x: 350, y: 350},
+                    {x: 550, y: 500}
+                ];
+                
+                positions.forEach((pos, i) => {
+                    const enemy = document.createElement('div');
+                    enemy.className = 'enemy';
+                    enemy.style.left = pos.x + 'px';
+                    enemy.style.top = pos.y + 'px';
+                    enemy.id = 'enemy' + i;
+                    document.getElementById('gameCanvas').appendChild(enemy);
+                    
+                    this.enemies.push({
+                        element: enemy,
+                        x: pos.x,
+                        y: pos.y,
+                        alive: true,
+                        direction: Math.random() * Math.PI * 2
+                    });
+                });
+            }
+            
+            moveHero() {
+                let newX = this.heroPos.x;
+                let newY = this.heroPos.y;
+                const speed = 3;
+                
+                if (this.keys['KeyW'] || this.keys['ArrowUp']) newY -= speed;
+                if (this.keys['KeyS'] || this.keys['ArrowDown']) newY += speed;
+                if (this.keys['KeyA'] || this.keys['ArrowLeft']) newX -= speed;
+                if (this.keys['KeyD'] || this.keys['ArrowRight']) newX += speed;
+                
+                // Límites de pantalla
+                newX = Math.max(0, Math.min(760, newX));
+                newY = Math.max(0, Math.min(560, newY));
+                
+                // Colisiones con obstáculos
+                if (!this.checkCollisionWithObstacles(newX, newY)) {
+                    this.heroPos.x = newX;
+                    this.heroPos.y = newY;
+                    this.hero.style.left = this.heroPos.x + 'px';
+                    this.hero.style.top = this.heroPos.y + 'px';
+                }
+            }
+            
+            checkCollisionWithObstacles(x, y) {
+                for (let obs of this.obstacles) {
+                    if (x < obs.x + obs.width && x + 40 > obs.x &&
+                        y < obs.y + obs.height && y + 40 > obs.y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            checkCollisionWithFriends() {
+                // Lamina
+                if (!this.lamina.dataset.collected) {
+                    const laminaRect = this.lamina.getBoundingClientRect();
+                    const heroRect = this.hero.getBoundingClientRect();
+                    if (this.isColliding(heroRect, laminaRect)) {
+                        this.collectFriend('lamina', 'Lamina');
+                    }
+                }
+                
+                // Basajaun
+                if (!this.basajaun.dataset.collected) {
+                    const basajaunRect = this.basajaun.getBoundingClientRect();
+                    const heroRect = this.hero.getBoundingClientRect();
+                    if (this.isColliding(heroRect, basajaunRect)) {
+                        this.collectFriend('basajaun', 'Basajaun');
+                    }
+                }
+            }
+            
+            collectFriend(friendId, friendName) {
+                const friend = document.getElementById(friendId);
+                friend.dataset.collected = 'true';
+                friend.style.opacity = '0.5';
+                friend.style.transform = 'scale(0.8)';
+                
+                this.friendsCollected++;
+                this.score += 50;
+                this.updateUI();
+                
+                const messages = {
+                    'lamina': '✨ ¡Lamina se ha unido a tu aventura! Su magia te protegerá.',
+                    'basajaun': '🌲 ¡Basajaun te ayudará! Su fuerza del bosque está contigo.'
+                };
+                
+                this.showMessage(messages[friendId]);
+                
+                if (this.friendsCollected === 2) {
+                    setTimeout(() => {
+                        this.showMessage('¡Agur! Ahora que tienes a ambos amigos, puedes rescatar a la princesa Ane.');
+                    }, 2000);
+                }
+            }
+            
+            checkCollisionWithPrincess() {
+                if (this.friendsCollected < 2) return;
+                
+                const princessRect = this.princess.getBoundingClientRect();
+                const heroRect = this.hero.getBoundingClientRect();
+                
+                if (this.isColliding(heroRect, princessRect) && !this.gameWon) {
+                    this.winGame();
+                }
+            }
+            
+            winGame() {
+                this.gameWon = true;
+                this.score += 200;
+                this.updateUI();
+                this.showMessage('🎉 ¡Zorionak! Has rescatado a la princesa Ane. ¡Euskal Herria está a salvo!');
+                
+                // Efectos de victoria
+                this.princess.style.animation = 'glow 0.5s infinite alternate';
+                setTimeout(() => {
+                    this.showMessage('¡Eskerrik asko por jugar! Presiona R para jugar de nuevo.');
+                }, 3000);
+            }
+            
+            moveEnemies() {
+                this.enemies.forEach(enemy => {
+                    if (!enemy.alive) return;
+                    
+                    // Movimiento aleatorio
+                    enemy.direction += (Math.random() - 0.5) * 0.3;
+                    enemy.x += Math.cos(enemy.direction) * 1;
+                    enemy.y += Math.sin(enemy.direction) * 1;
+                    
+                    // Límites
+                    if (enemy.x < 0 || enemy.x > 760) enemy.direction = Math.PI - enemy.direction;
+                    if (enemy.y < 0 || enemy.y > 560) enemy.direction = -enemy.direction;
+                    
+                    enemy.x = Math.max(0, Math.min(760, enemy.x));
+                    enemy.y = Math.max(0, Math.min(560, enemy.y));
+                    
+                    enemy.element.style.left = enemy.x + 'px';
+                    enemy.element.style.top = enemy.y + 'px';
+                    
+                    // Colisión con héroe
+                    const distance = Math.sqrt(
+                        Math.pow(enemy.x - this.heroPos.x, 2) + 
+                        Math.pow(enemy.y - this.heroPos.y, 2)
+                    );
+                    
+                    if (distance < 40) {
+                        this.takeDamage(5);
+                    }
+                });
+            }
+            
+            attack() {
+                this.enemies.forEach(enemy => {
+                    if (!enemy.alive) return;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(enemy.x - this.heroPos.x, 2) + 
+                        Math.pow(enemy.y - this.heroPos.y, 2)
+                    );
+                    
+                    if (distance < 60) {
+                        enemy.alive = false;
+                        enemy.element.style.display = 'none';
+                        this.score += 20;
+                        this.updateUI();
+                    }
+                });
+                
+                // Efecto visual de ataque
+                this.hero.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    this.hero.style.transform = 'scale(1)';
+                }, 100);
+            }
+            
+            takeDamage(amount) {
+                this.health -= amount;
+                this.health = Math.max(0, this.health);
+                this.updateUI();
+                
+                // Efecto visual de daño
+                this.hero.style.background = '#FF0000';
+                setTimeout(() => {
+                    this.hero.style.background = '#FF6B35';
+                }, 200);
+                
+                if (this.health <= 0) {
+                    this.gameOver();
+                }
+            }
+            
+            gameOver() {
+                this.showMessage('💀 ¡Hil zara! Has sido derrotado por Gaueko. Presiona R para intentar de nuevo.');
+            }
+            
+            restart() {
+                location.reload();
+            }
+            
+            isColliding(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+            
+            updateUI() {
+                document.getElementById('health').textContent = this.health;
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('friendsCount').textContent = this.friendsCollected;
+            }
+            
+            showMessage(text) {
+                const messageBox = document.getElementById('messageBox');
+                messageBox.textContent = text;
+                messageBox.style.display = 'block';
+                
+                setTimeout(() => {
+                    messageBox.style.display = 'none';
+                }, 4000);
+            }
+            
+            gameLoop() {
+                if (this.health > 0 && !this.gameWon) {
+                    this.moveHero();
+                    this.moveEnemies();
+                    this.checkCollisionWithFriends();
+                    this.checkCollisionWithPrincess();
+                }
+                
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        // Iniciar el juego
+        window.addEventListener('load', () => {
+            new VascoZeldaGame();
+        });
+    </script>
+</body>
+</html>

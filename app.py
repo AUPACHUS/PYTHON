@@ -305,6 +305,11 @@ def euskadi_piezas():
     """Ruta para la página Euskadi en Piezas."""
     return render_template("euskadi_piezas.html")
 
+@app.route('/zelda-vasco-game')
+def zelda_vasco_game():
+    """Ruta para la página del juego Zelda Vasco."""
+    return render_template('zelda_vasco_game.html', current_endpoint='zelda_vasco_game')
+
 if __name__ == "__main__":
     # Para desarrollo local, puedes activar el debug explícitamente.
     # En producción, el servidor WSGI (Gunicorn) ejecutará la app,
