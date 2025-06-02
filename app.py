@@ -310,6 +310,11 @@ def zelda_vasco_game():
     """Ruta para la página del juego Zelda Vasco."""
     return render_template('zelda_vasco_game.html', current_endpoint='zelda_vasco_game')
 
+@app.route('/chess')
+def chess():
+    """Ruta para la página de ajedrez."""
+    return render_template('chess.html')
+
 if __name__ == "__main__":
     # Para desarrollo local, puedes activar el debug explícitamente.
     # En producción, el servidor WSGI (Gunicorn) ejecutará la app,

@@ -63,6 +63,11 @@
                            {% if current_endpoint == 'zelda_vasco_game' %}aria-current="page"{% endif %}>Mikel eta Aneren Abentura</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link {% if current_endpoint == 'chess' %}active{% endif %}"
+                           href="{{ url_for('chess') }}"
+                           {% if current_endpoint == 'chess' %}aria-current="page"{% endif %}>Ajedrez</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="https://basquesource.blogspot.com/2025/05/basque-source-first-commit.html" target="_blank" rel="noopener noreferrer">BLOGGER</a>
                     </li>
                     <li class="nav-item">
